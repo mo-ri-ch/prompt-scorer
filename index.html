@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prompt Scorer</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0f0f0f;
+      --surface: #1a1a1a;
+      --surface2: #242424;
+      --border: rgba(255,255,255,0.08);
+      --border2: rgba(255,255,255,0.15);
+      --text: #f0f0f0;
+      --muted: #888;
+      --gold: #f5c842;
+      --green: #3ecf8e;
+    }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; }
+
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid var(--border); }
+    .logo { font-size: 15px; font-weight: 600; letter-spacing: -0.3px; }
+    .logo span { color: var(--green); }
+    .nav-tabs { display: flex; gap: 6px; }
+    .nav-tab { padding: 6px 16px; border-radius: 8px; border: 1px solid transparent; background: transparent; color: var(--muted); font-size: 13px; cursor: pointer; transition: all 0.15s; }
+    .nav-tab.active { background: var(--surface2); border-color: var(--border2); color: var(--text); font-weight: 500; }
+
+    .view { display: none; padding: 24px; }
+    .view.active { display: block; }
+
+    .host-layout { display: grid; grid-template-columns: 340px 1fr; gap: 20px; max-width: 1100px; }
+    .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
+    .panel-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 14px; }
+
+    textarea.task-input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; color: var(--text); font-size: 14px; line-height: 1.6; resize: vertical; min-height: 90px; font-family: inherit; outline: none; }
+    textarea.task-input:focus { border-color: var(--border2); }
+
+    .btn { padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border2); background: var(--surface2); color: var(--text); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+    .btn:hover { background: #2e2e2e; }
+    .btn.danger { border-color: rgba(239,68,68,0.4); color: #f87171; }
+    .btn.danger:hover { background: rgba(239,68,68,0.1); }
+    .btn-row { display: flex; gap: 8px; margin-top: 12px; }
+
+    .qr-center { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 4px; }
+    .url-pill { font-size: 11px; color: var(--muted); background: var(--surface2); padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border); word-break: break-all; text-align: center; max-width: 280px; }
+    .sub-count { font-size: 12px; color: var(--muted); }
+
+    .leaderboard { display: flex; flex-direction: column; gap: 8px; }
+    .lb-empty { font-size: 13px; color: var(--muted); text-align: center; padding: 40px 0; }
+    .lb-entry { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface2); transition: all 0.3s ease; }
+    .lb-entry.rank-1 { border-color: rgba(245,200,66,0.4); background: rgba(245,200,66,0.07); }
+    .lb-entry.rank-2 { border-color: rgba(180,180,200,0.3); }
+    .lb-rank { font-size: 13px; font-weight: 600; min-width: 28px; color: var(--muted); }
+    .lb-entry.rank-1 .lb-rank { color: var(--gold); }
+    .lb-name { font-size: 13px; font-weight: 600; min-width: 90px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .lb-prompt { font-size: 12px; color: var(--muted); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .lb-bar-wrap { width: 80px; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+    .lb-bar { height: 100%; border-radius: 3px; background: var(--green); transition: width 0.7s ease; }
+    .lb-score { font-size: 14px; font-weight: 600; min-width: 36px; text-align: right; }
+
+    .p-wrap { max-width: 480px; margin: 0 auto; }
+    .p-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px; }
+    .p-task-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; font-size: 15px; line-height: 1.65; color: var(--text); margin-bottom: 20px; }
+    .p-input { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px; color: var(--text); font-size: 14px; line-height: 1.6; font-family: inherit; outline: none; transition: border 0.15s; }
+    .p-input:focus { border-color: var(--border2); }
+    input.p-input { min-height: unset; margin-bottom: 10px; }
+    textarea.p-input { resize: vertical; min-height: 130px; }
+    .submit-btn { width: 100%; margin-top: 12px; padding: 12px; border-radius: 10px; border: 1px solid var(--green); background: rgba(62,207,142,0.1); color: var(--green); font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+    .submit-btn:hover { background: rgba(62,207,142,0.18); }
+    .submit-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .result-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px; margin-top: 20px; text-align: center; }
+    .score-big { font-size: 52px; font-weight: 700; color: var(--green); line-height: 1; }
+    .score-denom { font-size: 20px; color: var(--muted); }
+    .score-breakdown { font-size: 12px; color: var(--muted); margin-top: 8px; }
+    .feedback { font-size: 13px; color: #bbb; line-height: 1.65; margin-top: 16px; text-align: left; background: var(--surface2); border-radius: 8px; padding: 12px; }
+    .again-btn { margin-top: 16px; width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border2); background: transparent; color: var(--muted); font-size: 13px; cursor: pointer; }
+    .again-btn:hover { background: var(--surface2); }
+
+    .status { font-size: 13px; color: var(--muted); text-align: center; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .spinner { width: 14px; height: 14px; border: 2px solid var(--border2); border-top-color: var(--green); border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .pw-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 100; align-items: center; justify-content: center; }
+    .pw-overlay.open { display: flex; }
+    .pw-box { background: #1a1a1a; border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; padding: 32px; width: 300px; text-align: center; }
+    .pw-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+    .pw-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+    .pw-input { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.12); background: #242424; color: #f0f0f0; font-size: 14px; outline: none; margin-bottom: 10px; font-family: inherit; }
+    .pw-error { font-size: 12px; color: #f87171; margin-bottom: 10px; display: none; }
+    .pw-enter { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(62,207,142,0.5); background: rgba(62,207,142,0.1); color: #3ecf8e; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .pw-cancel { width: 100%; margin-top: 8px; padding: 8px; border-radius: 8px; border: none; background: transparent; color: var(--muted); font-size: 13px; cursor: pointer; }
+
+    @media (max-width: 700px) {
+      .host-layout { grid-template-columns: 1fr; }
+      nav { flex-direction: column; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Prompt<span>Scorer</span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab" id="hostTab" onclick="requestHost()">Host</button>
+    <button class="nav-tab active" id="participantTab" onclick="showParticipant()">Participant</button>
+  </div>
+</nav>
+
+<!-- PASSWORD MODAL -->
+<div class="pw-overlay" id="pwOverlay">
+  <div class="pw-box">
+    <div class="pw-title">Host access</div>
+    <div class="pw-sub">Enter your host password</div>
+    <input class="pw-input" id="pwInput" type="password" placeholder="Password" onkeydown="if(event.key==='Enter') checkPw()" />
+    <div class="pw-error" id="pwError">Wrong password. Try again.</div>
+    <button class="pw-enter" onclick="checkPw()">Enter</button>
+    <button class="pw-cancel" onclick="closePw()">Cancel</button>
+  </div>
+</div>
+
+<!-- HOST VIEW -->
+<div id="host" class="view">
+  <div class="host-layout">
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div class="panel">
+        <div class="panel-label">Task / Question</div>
+        <textarea class="task-input" id="taskInput" placeholder="Enter the task for participants…"></textarea>
+        <div class="btn-row">
+          <button class="btn" onclick="setTask()">Set task</button>
+          <button class="btn danger" onclick="clearAll()">Clear all</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-label">Participants join via</div>
+        <div class="qr-center">
+          <div id="qrCanvas" style="border-radius:8px;background:white;padding:8px;display:inline-block;"></div>
+          <div class="url-pill" id="urlPill">—</div>
+          <div class="sub-count" id="subCount">0 submissions</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-label">Live leaderboard</div>
+      <div class="leaderboard" id="leaderboard">
+        <div class="lb-empty">No submissions yet — waiting for participants…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PARTICIPANT VIEW -->
+<div id="participant" class="view active">
+  <div class="p-wrap">
+    <div class="p-label">Your task</div>
+    <div class="p-task-box" id="pTaskBox">Waiting for the host to set a task…</div>
+    <div id="submitArea">
+      <div class="p-label">Your name</div>
+      <input class="p-input" id="pName" type="text" placeholder="Enter your name or handle" maxlength="30" />
+      <div class="p-label">Your prompt</div>
+      <textarea class="p-input" id="pPrompt" placeholder="Write your best prompt here…"></textarea>
+      <button class="submit-btn" id="submitBtn" onclick="submitPrompt()">Submit prompt</button>
+      <div id="statusMsg"></div>
+    </div>
+    <div id="resultArea" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- FIREBASE -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDWzrQY1CDKXlvHZXblSRSCsIY0jq7rMYw",
+    authDomain: "prompt-scorer.firebaseapp.com",
+    databaseURL: "https://prompt-scorer-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "prompt-scorer",
+    storageBucket: "prompt-scorer.firebasestorage.app",
+    messagingSenderId: "307893556433",
+    appId: "1:307893556433:web:bc60cda7cbeb0d6a0021f0",
+    measurementId: "G-G67V6LPESP"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  const taskRef = ref(db, "task");
+  const entriesRef = ref(db, "entries");
+
+  // QR points to clean URL (no params) so participants land on Participant view
+  const cleanUrl = window.location.origin + window.location.pathname;
+  document.getElementById("urlPill").textContent = cleanUrl;
+  new QRCode(document.getElementById("qrCanvas"), { text: cleanUrl, width: 160, height: 160, colorDark: "#000000", colorLight: "#ffffff" });
+
+  // Live task sync
+  onValue(taskRef, snap => {
+    const t = snap.val() || "";
+    document.getElementById("pTaskBox").textContent = t || "Waiting for the host to set a task…";
+    const ti = document.getElementById("taskInput");
+    if (ti && !ti.dataset.edited) ti.value = t;
+  });
+
+  // Live leaderboard
+  onValue(entriesRef, snap => {
+    const data = snap.val();
+    const entries = data ? Object.values(data) : [];
+    entries.sort((a, b) => b.score - a.score);
+    document.getElementById("subCount").textContent = entries.length + " submission" + (entries.length !== 1 ? "s" : "");
+    renderLeaderboard(entries);
+  });
+
+  window.setTask = function () {
+    const t = document.getElementById("taskInput").value.trim();
+    if (!t) return alert("Please enter a task first.");
+    document.getElementById("taskInput").dataset.edited = "1";
+    set(taskRef, t);
+  };
+
+  window.clearAll = function () {
+    if (!confirm("Clear all submissions from the leaderboard?")) return;
+    remove(entriesRef);
+  };
+
+  window.submitPrompt = async function () {
+    const name = document.getElementById("pName").value.trim();
+    const prompt = document.getElementById("pPrompt").value.trim();
+    const task = document.getElementById("pTaskBox").textContent;
+    if (!name) return alert("Please enter your name.");
+    if (!prompt) return alert("Please write your prompt.");
+    if (!task || task.includes("Waiting")) return alert("The host hasn't set a task yet.");
+
+    const btn = document.getElementById("submitBtn");
+    const statusMsg = document.getElementById("statusMsg");
+    btn.disabled = true;
+    statusMsg.innerHTML = '<div class="status"><div class="spinner"></div>Scoring your prompt…</div>';
+
+    try {
+      const response = await fetch("https://damp-grass-a764.rishal66.workers.dev", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          messages: [{
+            role: "user",
+            content: `You are a strict prompt quality judge. Score this prompt on two criteria:
+1. Clarity & specificity (0-50): Is the prompt clear, specific, and unambiguous?
+2. Output quality prediction (0-50): How good would the AI output be if this prompt was used?
+
+Task: ${task}
+Submitted prompt: ${prompt}
+
+Respond ONLY with valid JSON, no markdown, no extra text:
+{"clarity": <0-50>, "output": <0-50>, "total": <0-100>, "feedback": "<2 sentences of constructive feedback>"}`
+          }]
+        })
+      });
+
+      const data = await response.json();
+      const text = data.content.map(b => b.text || "").join("");
+      let result;
+      try { result = JSON.parse(text); }
+      catch (e) { const m = text.match(/\{[\s\S]*\}/); result = m ? JSON.parse(m[0]) : null; }
+      if (!result) throw new Error("Parse failed");
+
+      await push(entriesRef, { name, prompt, score: result.total, clarity: result.clarity, output: result.output, feedback: result.feedback, ts: Date.now() });
+
+      document.getElementById("submitArea").style.display = "none";
+      document.getElementById("resultArea").style.display = "block";
+      document.getElementById("resultArea").innerHTML = `
+        <div class="result-card">
+          <div class="score-big">${Math.round(result.total)}<span class="score-denom">/100</span></div>
+          <div class="score-breakdown">Clarity: ${Math.round(result.clarity)}/50 &nbsp;·&nbsp; Output quality: ${Math.round(result.output)}/50</div>
+          <div class="feedback">${esc(result.feedback)}</div>
+          <button class="again-btn" onclick="resetParticipant()">Submit another prompt</button>
+        </div>`;
+    } catch (e) {
+      statusMsg.innerHTML = '<div class="status" style="color:#f87171">Scoring failed. Please try again.</div>';
+      btn.disabled = false;
+    }
+  };
+
+  window.resetParticipant = function () {
+    document.getElementById("pName").value = "";
+    document.getElementById("pPrompt").value = "";
+    document.getElementById("statusMsg").innerHTML = "";
+    document.getElementById("submitBtn").disabled = false;
+    document.getElementById("submitArea").style.display = "block";
+    document.getElementById("resultArea").style.display = "none";
+  };
+
+  function renderLeaderboard(entries) {
+    const lb = document.getElementById("leaderboard");
+    if (!entries.length) { lb.innerHTML = '<div class="lb-empty">No submissions yet — waiting for participants…</div>'; return; }
+    lb.innerHTML = entries.map((e, i) => {
+      const medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `${i+1}.`;
+      const cls = i === 0 ? "lb-entry rank-1" : i === 1 ? "lb-entry rank-2" : "lb-entry";
+      return `<div class="${cls}">
+        <span class="lb-rank">${medal}</span>
+        <span class="lb-name">${esc(e.name)}</span>
+        <span class="lb-prompt">${esc(e.prompt)}</span>
+        <div class="lb-bar-wrap"><div class="lb-bar" style="width:${Math.round(e.score)}%"></div></div>
+        <span class="lb-score">${Math.round(e.score)}</span>
+      </div>`;
+    }).join("");
+  }
+
+  function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+</script>
+
+<script>
+  // ── Your host password — change this to whatever you want ──
+  const HOST_PASSWORD = "rishal2025";
+
+  function requestHost() {
+    if (sessionStorage.getItem("isHost") === "yes") { activateHost(); return; }
+    document.getElementById("pwOverlay").classList.add("open");
+    document.getElementById("pwInput").value = "";
+    document.getElementById("pwError").style.display = "none";
+    setTimeout(() => document.getElementById("pwInput").focus(), 100);
+  }
+
+  function checkPw() {
+    if (document.getElementById("pwInput").value === HOST_PASSWORD) {
+      sessionStorage.setItem("isHost", "yes");
+      closePw();
+      activateHost();
+    } else {
+      document.getElementById("pwError").style.display = "block";
+      document.getElementById("pwInput").value = "";
+      document.getElementById("pwInput").focus();
+    }
+  }
+
+  function closePw() { document.getElementById("pwOverlay").classList.remove("open"); }
+
+  function activateHost() {
+    document.getElementById("host").classList.add("active");
+    document.getElementById("participant").classList.remove("active");
+    document.getElementById("hostTab").classList.add("active");
+    document.getElementById("participantTab").classList.remove("active");
+  }
+
+  function showParticipant() {
+    document.getElementById("participant").classList.add("active");
+    document.getElementById("host").classList.remove("active");
+    document.getElementById("participantTab").classList.add("active");
+    document.getElementById("hostTab").classList.remove("active");
+  }
+</script>
+
+</body>
+</html>
