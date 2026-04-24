@@ -1298,7 +1298,11 @@ Respond ONLY with valid JSON, no markdown, no extra text:
   }
 
   function toggleGuideCard(card) {
-    card.classList.toggle('expanded');
+    const isOpen = card.classList.contains('expanded');
+    // Close all guide cards first
+    document.querySelectorAll('.guide-card').forEach(c => c.classList.remove('expanded'));
+    // If it wasn't open, open it
+    if (!isOpen) card.classList.add('expanded');
   }
 
   function toggleCollapse(header) {
