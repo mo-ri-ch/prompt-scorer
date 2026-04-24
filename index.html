@@ -320,19 +320,19 @@
     /* ── DETAIL MODAL ── */
     .detail-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(14px); z-index:300; align-items:center; justify-content:center; padding:20px; }
     .detail-overlay.open { display:flex; }
-    .detail-box { background:var(--card-bg); border:1px solid var(--border2); border-radius:24px; padding:32px 28px; width:100%; max-width:460px; position:relative; animation:slide-up .35s cubic-bezier(.34,1.56,.64,1); max-height:90vh; overflow-y:auto; }
-    .detail-close { position:absolute; top:16px; right:16px; width:32px; height:32px; border-radius:50%; border:1px solid var(--border2); background:var(--surface2); color:var(--muted); font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .2s; }
+    .detail-box { background:var(--card-bg); border:1px solid var(--border2); border-radius:20px; padding:24px 28px; width:100%; max-width:760px; position:relative; animation:slide-up .35s cubic-bezier(.34,1.56,.64,1); overflow:hidden; display:grid; grid-template-columns:180px 1fr; grid-template-rows:auto; gap:0 24px; }
+    .detail-close { position:absolute; top:14px; right:14px; width:28px; height:28px; border-radius:50%; border:1px solid var(--border2); background:var(--surface2); color:var(--muted); font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .2s; grid-column:1/-1; z-index:1; }
     .detail-close:hover { background:var(--surface3); color:var(--text); }
-    .detail-rank { font-size:36px; margin-bottom:6px; }
-    .detail-name { font-family:var(--serif); font-size:30px; font-style:italic; font-weight:400; margin-bottom:16px; color:var(--text); }
-    .detail-score-row { display:flex; align-items:flex-end; gap:16px; margin-bottom:22px; flex-wrap:wrap; }
-    .detail-score-big { font-family:var(--serif); font-size:82px; line-height:1; letter-spacing:-3px; background:linear-gradient(135deg,var(--mint),var(--violet)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
-    .detail-pills { display:flex; flex-direction:column; gap:6px; padding-bottom:8px; }
-    .detail-pill { background:var(--surface2); border:1px solid var(--border); padding:4px 12px; border-radius:999px; font-family:var(--mono); font-size:13px; color:var(--text2); white-space:nowrap; }
+    .detail-rank { font-size:28px; margin-bottom:4px; grid-column:1; }
+    .detail-name { font-family:var(--serif); font-size:22px; font-style:italic; font-weight:400; margin-bottom:10px; color:var(--text); grid-column:1; }
+    .detail-score-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; grid-column:1; }
+    .detail-score-big { font-family:var(--serif); font-size:52px; line-height:1; letter-spacing:-2px; background:linear-gradient(135deg,var(--mint),var(--violet)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+    .detail-pills { display:flex; flex-direction:column; gap:4px; grid-column:1; margin-bottom:0; }
+    .detail-pill { background:var(--surface2); border:1px solid var(--border); padding:3px 10px; border-radius:999px; font-family:var(--mono); font-size:11px; color:var(--text2); white-space:nowrap; }
     .detail-pill strong { color:var(--mint); }
-    .detail-section-label { font-family:var(--mono); font-size:13px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.14em; margin-bottom:10px; }
-    .detail-prompt { font-family:var(--sans); font-size:16px; line-height:1.75; color:var(--text); background:var(--surface2); border:1px solid var(--border); border-radius:14px; padding:16px; white-space:pre-wrap; }
-    .detail-feedback { font-family:var(--serif); font-size:18px; font-style:italic; color:var(--text2); line-height:1.65; padding:16px; background:rgba(0,0,0,.15); border-radius:12px; border-left:3px solid var(--mint); }
+    .detail-section-label { font-family:var(--mono); font-size:10px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.14em; margin-bottom:6px; }
+    .detail-prompt { font-family:var(--sans); font-size:13px; line-height:1.65; color:var(--text); background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:12px 14px; white-space:pre-wrap; }
+    .detail-feedback { font-family:var(--serif); font-size:14px; font-style:italic; color:var(--text2); line-height:1.6; padding:10px 14px; background:rgba(0,0,0,.15); border-radius:10px; border-left:3px solid var(--mint); }
     [data-theme="light"] .detail-feedback { background:rgba(0,0,0,.04); }
 
     /* ── PROMPT TECHNIQUE CHIPS ── */
@@ -652,17 +652,29 @@
 <!-- DETAIL MODAL -->
 <div class="detail-overlay" id="detailOverlay" onclick="closeDetail(event)">
   <div class="detail-box" id="detailBox">
-    <button class="detail-close" onclick="closeDetailModal()">&#x2715;</button>
-    <div class="detail-rank" id="detailRank"></div>
-    <div class="detail-name" id="detailName"></div>
-    <div class="detail-score-row">
-      <div class="detail-score-big" id="detailScore"></div>
+    <button class="detail-close" onclick="closeDetailModal()" style="position:absolute;top:14px;right:14px;grid-column:unset;">&#x2715;</button>
+
+    <!-- Left column: identity + score -->
+    <div style="display:flex;flex-direction:column;justify-content:flex-start;padding-top:4px;">
+      <div class="detail-rank" id="detailRank"></div>
+      <div class="detail-name" id="detailName"></div>
+      <div class="detail-score-row">
+        <div class="detail-score-big" id="detailScore"></div>
+      </div>
       <div class="detail-pills" id="detailPills"></div>
     </div>
-    <div class="detail-section-label">their prompt</div>
-    <div class="detail-prompt" id="detailPrompt"></div>
-    <div class="detail-section-label" style="margin-top:16px;">ai feedback</div>
-    <div class="detail-feedback" id="detailFeedback"></div>
+
+    <!-- Right column: prompt + feedback -->
+    <div style="display:flex;flex-direction:column;gap:10px;min-width:0;overflow:hidden;">
+      <div>
+        <div class="detail-section-label">their prompt</div>
+        <div class="detail-prompt" id="detailPrompt"></div>
+      </div>
+      <div>
+        <div class="detail-section-label">ai feedback</div>
+        <div class="detail-feedback" id="detailFeedback"></div>
+      </div>
+    </div>
   </div>
 </div>
 
