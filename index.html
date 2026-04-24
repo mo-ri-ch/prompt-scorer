@@ -444,7 +444,7 @@
 
       <div id="resultArea" style="display:none;"></div>
       <div id="alreadyArea" style="display:none;"></div>
-      <div id="participantIdealBox" style="display:none;"></div>
+
     </div>
 
     <!-- RIGHT: live leaderboard -->
@@ -588,20 +588,18 @@
   onValue(idealRef, snap => {
     const data = snap.val();
     const hostBox = document.getElementById("hostIdealBox");
-    const partBox = document.getElementById("participantIdealBox");
     const revealBtn = document.getElementById("revealBtn");
     const hideBtn = document.getElementById("hideRevealBtn");
     if (data && data.prompt) {
       const html = `<div class="ideal-box"><div class="ideal-label">✨ the GOAT prompt</div><div class="ideal-text">${esc(data.prompt)}</div>${data.tips?`<div class="ideal-tips"><strong>why it slaps</strong>${esc(data.tips)}</div>`:""} ${data.techniques ? buildTechniqueBadges(data.techniques) : ""}</div>`;
       const partBox2 = document.getElementById("participantIdealBox2");
       hostBox.innerHTML = html; hostBox.style.display = "block";
-      partBox.innerHTML = html; partBox.style.display = "block";
       if (partBox2) { partBox2.innerHTML = html; partBox2.style.display = "block"; }
       if (revealBtn) revealBtn.style.display = "none";
       if (hideBtn) hideBtn.style.display = "block";
     } else {
       const partBox2b = document.getElementById("participantIdealBox2");
-      hostBox.style.display = "none"; partBox.style.display = "none";
+      hostBox.style.display = "none";
       if (partBox2b) partBox2b.style.display = "none";
       if (revealBtn) { revealBtn.style.display = "block"; revealBtn.disabled = false; revealBtn.innerHTML = "✨ reveal the GOAT prompt"; }
       if (hideBtn) hideBtn.style.display = "none";
@@ -740,9 +738,9 @@ Respond ONLY with valid JSON, no markdown, no extra text:
     lb.innerHTML = entries.map((e,i) => {
       const medal = i===0?"🥇":i===1?"🥈":i===2?"🥉":`${i+1}`;
       const cls = i===0?"lb-entry rank-1":i===1?"lb-entry rank-2":i===2?"lb-entry rank-3":"lb-entry";
-      return `<div class="${cls}">
+      return `<div class="${cls}" onclick="openDetail(${i})" style="cursor:pointer;">
         <span class="lb-rank">${medal}</span>
-        <span class="lb-name" style="flex:1;max-width:none;">${esc(e.name)}</span>
+        <span class="lb-name clickable" style="flex:1;max-width:none;">${esc(e.name)}</span>
         <div class="lb-bar-wrap"><div class="lb-bar" style="width:${Math.round(e.score)}%"></div></div>
         <span class="lb-score">${Math.round(e.score)}</span>
       </div>`;
