@@ -358,6 +358,22 @@
 
     .lb-name.clickable { cursor:pointer; text-decoration:underline; text-decoration-style:dotted; text-underline-offset:3px; transition:color .15s; }
     .lb-name.clickable:hover { color:var(--violet); }
+
+    /* ── CUSTOM SCROLLBARS ── */
+    * { scrollbar-width: thin; scrollbar-color: rgba(167,139,250,0.4) transparent; }
+    *::-webkit-scrollbar { width: 4px; height: 4px; }
+    *::-webkit-scrollbar-track { background: transparent; }
+    *::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--violet), var(--mint)); border-radius: 999px; }
+    *::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #c4b5fd, #6ee7b7); }
+    *::-webkit-scrollbar-corner { background: transparent; }
+
+    /* Scrollbar for select dropdowns */
+    select { scrollbar-width: thin; scrollbar-color: rgba(167,139,250,0.4) transparent; }
+
+    /* Thicker scrollbar for textarea and prompt boxes */
+    textarea::-webkit-scrollbar, .detail-prompt::-webkit-scrollbar, .detail-box::-webkit-scrollbar { width: 5px; }
+    textarea::-webkit-scrollbar-thumb, .detail-prompt::-webkit-scrollbar-thumb, .detail-box::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--violet), var(--mint)); border-radius: 999px; }
+
   </style>
 </head>
 <body>
