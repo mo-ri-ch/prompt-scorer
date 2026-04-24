@@ -171,6 +171,27 @@
 
     .submit-btn { width: 100%; margin-top: 14px; padding: 16px; border-radius: 14px; border: none; background: linear-gradient(135deg,var(--mint),var(--violet)); color: #08080f; font-family: var(--sans); font-size: 18px; font-weight: 800; letter-spacing: -0.3px; cursor: pointer; transition: all 0.22s; }
 
+    /* ── GUIDE SECTION ── */
+    .guide-section { max-width: 1180px; margin: 0 auto 28px; }
+    .guide-header { margin-bottom: 16px; }
+    .guide-title { font-family: var(--serif); font-size: 26px; font-style: italic; color: var(--text); letter-spacing: -0.5px; }
+    .guide-sub { font-family: var(--mono); font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-top: 4px; }
+    .guide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+    .guide-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; cursor: pointer; transition: border .2s, background .2s; overflow: hidden; }
+    .guide-card:hover { border-color: var(--border2); background: var(--surface2); }
+    .guide-card.expanded { border-color: var(--border2); }
+    .guide-card-top { display: flex; align-items: center; gap: 10px; padding: 13px 14px; }
+    .guide-badge { font-size: 18px; flex-shrink: 0; line-height: 1; }
+    .guide-name { font-family: var(--sans); font-size: 14px; font-weight: 700; color: var(--text); flex: 1; }
+    .guide-chevron { font-size: 16px; font-weight: 700; color: var(--muted); transition: transform .25s; flex-shrink: 0; }
+    .guide-card.expanded .guide-chevron { transform: rotate(45deg); color: var(--text); }
+    .guide-card-body { display: none; padding: 0 14px 14px; font-size: 14px; color: var(--text2); line-height: 1.6; border-top: 1px solid var(--border); padding-top: 12px; }
+    .guide-card.expanded .guide-card-body { display: block; }
+    .guide-eg-label { font-family: var(--mono); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+    .guide-eg { font-family: var(--serif); font-style: italic; font-size: 14px; color: var(--mint); display: block; margin-top: 4px; }
+    @media (max-width: 600px) { .guide-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 400px) { .guide-grid { grid-template-columns: 1fr; } }
+
     /* ── COLLAPSIBLE SECTIONS ── */
     .collapsible { border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 16px; }
     .collapsible-header { display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; cursor: pointer; background: var(--surface2); font-family: var(--mono); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); user-select: none; transition: background .15s; gap: 10px; }
@@ -245,6 +266,19 @@
     .pw-error { font-size: 12px; color: #fca5a5; margin-bottom: 10px; display: none; }
     .pw-enter { width: 100%; padding: 14px; border-radius: 12px; border: none; background: linear-gradient(135deg,var(--mint),var(--violet)); color: #08080f; font-size: 16px; font-weight: 800; cursor: pointer; font-family: var(--sans); }
     .pw-cancel { width: 100%; margin-top: 8px; padding: 10px; border-radius: 10px; border: none; background: transparent; color: var(--muted); font-size: 13px; cursor: pointer; font-family: var(--sans); }
+
+    /* ── PRACTICE TAB ── */
+    .practice-layout { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,340px); gap: 20px; max-width: 1180px; margin: 0 auto; align-items: start; }
+    .practice-left { min-width: 0; }
+    .practice-right { min-width: 0; position: sticky; top: 20px; }
+    .practice-lb-entry { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface2); margin-bottom: 6px; }
+    .practice-lb-task { font-family: var(--mono); font-size: 11px; color: var(--muted); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .practice-lb-score { font-family: var(--mono); font-size: 16px; font-weight: 800; flex-shrink: 0; }
+    .practice-best { background: linear-gradient(90deg,rgba(251,191,36,.1),transparent); border-color: rgba(251,191,36,.35) !important; }
+    @media (max-width: 900px) {
+      .practice-layout { grid-template-columns: 1fr; }
+      .practice-right { position: static; }
+    }
 
     /* ── FOOTER ── */
     footer { position: relative; z-index: 5; text-align: center; padding: 28px 20px; border-top: 1px solid var(--border); backdrop-filter: blur(10px); }
@@ -332,7 +366,9 @@
   <div class="nav-right">
     <div class="nav-tabs">
       <button class="nav-tab" id="hostTab" onclick="requestHost()">host</button>
-      <button class="nav-tab active" id="participantTab" onclick="showParticipant()">play</button>
+      <button class="nav-tab active" id="competeTab" onclick="showTab('compete')">⛳ compete</button>
+      <button class="nav-tab" id="learnTab" onclick="showTab('learn')">🧠 learn</button>
+      <button class="nav-tab" id="practiceTab" onclick="showTab('practice')">✍️ practice</button>
     </div>
     <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="toggle theme">🌙</button>
   </div>
@@ -439,7 +475,8 @@
 </div>
 
 <!-- PARTICIPANT VIEW -->
-<div id="participant" class="view active">
+<!-- ⛳ COMPETE TAB -->
+<div id="compete" class="view active">
   <div class="p-layout">
 
     <!-- LEFT: submit area -->
@@ -452,6 +489,7 @@
 
       <div class="p-label">your task <span class="num">01</span></div>
       <div class="p-task-box" id="pTaskBox">waiting for the host to drop the task…</div>
+      <div id="participantIdealBox2" style="display:none;"></div>
 
       <div id="submitArea">
         <div class="p-label">your name <span class="num">what should we call you?</span></div>
@@ -470,7 +508,6 @@
 
       <div id="resultArea" style="display:none;"></div>
       <div id="alreadyArea" style="display:none;"></div>
-      <div id="participantIdealBox2" style="display:none;"></div>
 
     </div>
 
@@ -481,6 +518,134 @@
         <div class="lb-empty">waiting for the goats…</div>
       </div>
 
+    </div>
+
+  </div>
+</div>
+
+<!-- 🧠 LEARN TAB -->
+<div id="learn" class="view">
+  <div class="guide-section">
+    <div class="guide-header">
+      <div class="guide-title">🧠 know your prompts</div>
+      <div class="guide-sub">tap any technique to learn how to use it</div>
+    </div>
+    <div class="guide-grid">
+      <div class="guide-card" onclick="this.classList.toggle('expanded')">
+        <div class="guide-card-top"><span class="guide-badge tbadge-role">🎭</span><span class="guide-name">Role Prompting</span><span class="guide-chevron">+</span></div>
+        <div class="guide-card-body">Tell the AI <em>who to be</em> before giving the task. Sets expertise, tone and perspective.<br><br><span class="guide-eg-label">example</span><br><span class="guide-eg">"You are a senior UX designer with 10 years of experience..."</span></div>
+      </div>
+      <div class="guide-card" onclick="this.classList.toggle('expanded')">
+        <div class="guide-card-top"><span class="guide-badge tbadge-instr">📌</span><span class="guide-name">Instruction</span><span class="guide-chevron">+</span></div>
+        <div class="guide-card-body">The core <em>ask</em>. Be direct, specific and action-oriented. Vague instructions get vague answers.<br><br><span class="guide-eg-label">example</span><br><span class="guide-eg">"Write a 3-point summary in plain English, each point under 20 words."</span></div>
+      </div>
+      <div class="guide-card" onclick="this.classList.toggle('expanded')">
+        <div class="guide-card-top"><span class="guide-badge tbadge-context">🌐</span><span class="guide-name">Context</span><span class="guide-chevron">+</span></div>
+        <div class="guide-card-body">Give the AI the <em>background it needs</em> — audience, situation, constraints.<br><br><span class="guide-eg-label">example</span><br><span class="guide-eg">"The audience is non-technical managers in a 50-person company."</span></div>
+      </div>
+      <div class="guide-card" onclick="this.classList.toggle('expanded')">
+        <div class="guide-card-top"><span class="guide-badge tbadge-input">📥</span><span class="guide-name">Input</span><span class="guide-chevron">+</span></div>
+        <div class="guide-card-body">Provide the <em>data or content</em> the AI should work with.<br><br><span class="guide-eg-label">example</span><br><span class="guide-eg">"Here is the email thread: [paste text]..."</span></div>
+      </div>
+      <div class="guide-card" onclick="this.classList.toggle('expanded')">
+        <div class="guide-card-top"><span class="guide-badge tbadge-output">📤</span><span class="guide-name">Output Format</span><span class="guide-chevron">+</span></div>
+        <div class="guide-card-body">Tell the AI exactly <em>how to structure</em> the response.<br><br><span class="guide-eg-label">example</span><br><span class="guide-eg">"Return as a numbered list. Max 5 items. No intro paragraph."</span></div>
+      </div>
+      <div class="guide-card" onclick="this.classList.toggle('expanded')">
+        <div class="guide-card-top"><span class="guide-badge tbadge-cot">🔗</span><span class="guide-name">Chain-of-Thought</span><span class="guide-chevron">+</span></div>
+        <div class="guide-card-body">Ask the AI to <em>reason step by step</em> before answering.<br><br><span class="guide-eg-label">example</span><br><span class="guide-eg">"Think through this carefully before giving your final answer."</span></div>
+      </div>
+      <div class="guide-card" onclick="this.classList.toggle('expanded')">
+        <div class="guide-card-top"><span class="guide-badge tbadge-fewshot">📋</span><span class="guide-name">Few-Shot</span><span class="guide-chevron">+</span></div>
+        <div class="guide-card-body">Show the AI <em>1–3 examples</em> of good responses before asking.<br><br><span class="guide-eg-label">example</span><br><span class="guide-eg">"Here are two examples of the style I want: [ex1] / [ex2]..."</span></div>
+      </div>
+      <div class="guide-card" onclick="this.classList.toggle('expanded')">
+        <div class="guide-card-top"><span class="guide-badge tbadge-instr">🎯</span><span class="guide-name">Specificity</span><span class="guide-chevron">+</span></div>
+        <div class="guide-card-body">Replace vague words with <em>precise numbers, names and constraints</em>.<br><br><span class="guide-eg-label">weak → strong</span><br><span class="guide-eg">"Write something short" → "Write exactly 3 sentences, under 40 words total."</span></div>
+      </div>
+      <div class="guide-card" onclick="this.classList.toggle('expanded')">
+        <div class="guide-card-top"><span class="guide-badge tbadge-context">🗣️</span><span class="guide-name">Tone & Voice</span><span class="guide-chevron">+</span></div>
+        <div class="guide-card-body">Tell the AI the <em>emotional register</em> you want.<br><br><span class="guide-eg-label">example</span><br><span class="guide-eg">"Use a warm, conversational tone. Avoid corporate jargon."</span></div>
+      </div>
+      <div class="guide-card" onclick="this.classList.toggle('expanded')">
+        <div class="guide-card-top"><span class="guide-badge tbadge-output">🚫</span><span class="guide-name">Constraints</span><span class="guide-chevron">+</span></div>
+        <div class="guide-card-body">Tell the AI what to <em>avoid or exclude</em>.<br><br><span class="guide-eg-label">example</span><br><span class="guide-eg">"Do not use bullet points. Do not mention pricing."</span></div>
+      </div>
+      <div class="guide-card" onclick="this.classList.toggle('expanded')">
+        <div class="guide-card-top"><span class="guide-badge tbadge-role">🎪</span><span class="guide-name">Audience Framing</span><span class="guide-chevron">+</span></div>
+        <div class="guide-card-body">Tell the AI <em>who will read the output</em>.<br><br><span class="guide-eg-label">example</span><br><span class="guide-eg">"Explain this to a non-technical founder who understands business but not engineering."</span></div>
+      </div>
+      <div class="guide-card" onclick="this.classList.toggle('expanded')">
+        <div class="guide-card-top"><span class="guide-badge tbadge-fewshot">⚡</span><span class="guide-name">Zero-Shot</span><span class="guide-chevron">+</span></div>
+        <div class="guide-card-body">Giving the AI a task <em>with no examples</em> — relying purely on instruction, context and role.<br><br><span class="guide-eg-label">vs few-shot</span><br><span class="guide-eg">Use zero-shot for clear tasks, few-shot when you need a specific style.</span></div>
+      </div>
+      <div class="guide-card" onclick="this.classList.toggle('expanded')">
+        <div class="guide-card-top"><span class="guide-badge tbadge-cot">🪞</span><span class="guide-name">Self-Reflection</span><span class="guide-chevron">+</span></div>
+        <div class="guide-card-body">Ask the AI to <em>review and critique its own output</em> before finishing.<br><br><span class="guide-eg-label">example</span><br><span class="guide-eg">"After writing your answer, review it for clarity and accuracy."</span></div>
+      </div>
+      <div class="guide-card" onclick="this.classList.toggle('expanded')">
+        <div class="guide-card-top"><span class="guide-badge tbadge-input">🔁</span><span class="guide-name">Iteration</span><span class="guide-chevron">+</span></div>
+        <div class="guide-card-body">Great prompts are <em>built in layers</em>. Start with a draft, see what is missing, then refine.<br><br><span class="guide-eg-label">tip</span><br><span class="guide-eg">Ask yourself: "What would the AI need to know to nail this?" — then add those details.</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ✍️ PRACTICE TAB -->
+<div id="practice" class="view">
+  <div class="practice-layout">
+
+    <div class="practice-left">
+      <div class="p-hero" style="text-align:left;margin-bottom:20px;">
+        <div class="p-hero-kicker">✍️ self practice</div>
+        <div class="p-hero-title" style="font-size:clamp(28px,5vw,42px);">test yourself</div>
+        <div class="p-hero-sub">pick a task, write a prompt, get scored instantly</div>
+      </div>
+
+      <div class="p-label">choose a task</div>
+      <select class="preset-select" id="practiceTaskSelect" onchange="loadPracticeTask()" style="margin-bottom:12px;">
+        <option value="">— pick a task to practice —</option>
+        <optgroup label="✏️ Writing & Communication">
+          <option value="Write a professional email to your manager requesting a one-week leave for a family function.">Email — request leave from manager</option>
+          <option value="Write a polite but firm follow-up email to a client who hasn't paid an invoice that is 15 days overdue.">Email — chase overdue invoice</option>
+          <option value="Draft a LinkedIn post announcing that you've just been promoted, without sounding arrogant.">LinkedIn — promotion announcement</option>
+          <option value="Write a short, persuasive product description for a new noise-cancelling wireless earbud, targeted at college students.">Product description — earbuds</option>
+        </optgroup>
+        <optgroup label="💼 Business & Work">
+          <option value="Create a one-page executive summary of why a small bakery should start selling online, including risks and opportunities.">Strategy — bakery goes online</option>
+          <option value="Generate 5 creative Instagram reel ideas for a local coffee shop trying to attract Gen-Z customers.">Marketing — coffee shop reels</option>
+          <option value="Draft a customer apology message for a food delivery app after an order was delivered 2 hours late and cold.">Customer support — food delivery apology</option>
+        </optgroup>
+        <optgroup label="🎓 Learning & Explaining">
+          <option value="Explain how a blockchain works to a 10-year-old, without using any technical jargon.">Explain — blockchain for a kid</option>
+          <option value="Write a beginner-friendly explanation of how the stock market works, using the analogy of a fruit market.">Explain — stock market</option>
+        </optgroup>
+        <optgroup label="🎨 Figma & UI/UX Design">
+          <option value="You are a senior UX designer. Write a prompt that will help an AI generate a complete user flow for an onboarding screen of a B2B SaaS product.">User flow — B2B SaaS onboarding</option>
+          <option value="Write a prompt that gets an AI to generate a component breakdown for a complex data table in Figma.">Figma component spec — data table</option>
+        </optgroup>
+        <optgroup label="😄 Fun & Icebreakers">
+          <option value="Come up with a ridiculous but convincing 60-second pitch for a startup that sells air from different cities.">Pitch — bottled city air</option>
+          <option value="Imagine coffee and tea are having an argument about which one is superior. Write the dialogue in 6 lines.">Dialogue — coffee vs tea</option>
+        </optgroup>
+      </select>
+
+      <div class="p-label">the task</div>
+      <div class="p-task-box" id="practiceTaskBox" style="font-size:16px;min-height:52px;">select a task above to begin…</div>
+
+      <div class="p-label" style="margin-top:16px;">your prompt <span class="num">type it manually ✎</span></div>
+      <textarea class="p-input" id="practicePrompt" placeholder="write your prompt here…" style="min-height:140px;"></textarea>
+
+      <button class="submit-btn" id="practiceBtn" onclick="submitPracticePrompt()" style="margin-top:12px;">score my prompt <span class="arrow">→</span></button>
+      <div id="practiceStatus"></div>
+      <div id="practiceResult" style="display:none;margin-top:16px;"></div>
+    </div>
+
+    <div class="practice-right panel">
+      <div class="panel-label">your practice scores 📈</div>
+      <div id="practiceLb" style="display:flex;flex-direction:column;gap:8px;">
+        <div class="lb-empty">no attempts yet — pick a task and go!</div>
+      </div>
     </div>
 
   </div>
@@ -664,13 +829,20 @@ Respond ONLY with valid JSON, no markdown, no extra text:
   "prompt": "<the complete ideal prompt, written exactly as a user would type it>",
   "tips": "<2-3 sentences explaining what makes this prompt effective overall>",
   "techniques": {
-    "role_prompting": "<2-3 word verdict on role/persona usage e.g. 'Well defined', 'Needs persona', 'Expert role set' — empty string if not used at all>",
-    "few_shot": "<2-3 word verdict on example usage e.g. 'Good examples', 'Missing examples', 'One example given' — empty string if not used at all>",
-    "chain_of_thought": "<2-3 word verdict on step-by-step reasoning e.g. 'Steps requested', 'Could add steps', 'Logic structured well' — empty string if not used>",
-    "instruction": "<2-3 word verdict on the core instruction e.g. 'Very clear', 'Too vague', 'Perfectly scoped', 'Needs specificity' — always non-empty>",
-    "context": "<2-3 word verdict on background context e.g. 'Good background', 'Needs more context', 'Context is rich' — empty string if not used>",
-    "input": "<2-3 word verdict on input/data provided e.g. 'Data included', 'Input missing', 'Well specified' — empty string if not used>",
-    "output_format": "<2-3 word verdict on output format e.g. 'Format defined', 'No format set', 'Structure is clear' — empty string if not used>"
+    "role_prompting": "<2-3 word verdict e.g. 'Expert role set', 'Needs persona' — empty if not used>",
+    "instruction": "<2-3 word verdict e.g. 'Very clear', 'Too vague' — always non-empty>",
+    "context": "<2-3 word verdict e.g. 'Rich context', 'Needs context' — empty if not used>",
+    "input": "<2-3 word verdict e.g. 'Data included', 'Input missing' — empty if not used>",
+    "output_format": "<2-3 word verdict e.g. 'Format defined', 'No format set' — empty if not used>",
+    "chain_of_thought": "<2-3 word verdict e.g. 'Steps requested', 'Add reasoning' — empty if not used>",
+    "few_shot": "<2-3 word verdict e.g. 'Good examples', 'No examples' — empty if not used>",
+    "specificity": "<2-3 word verdict e.g. 'Very specific', 'Too vague', 'Needs numbers' — always non-empty>",
+    "tone_voice": "<2-3 word verdict e.g. 'Tone defined', 'No tone set', 'Voice is clear' — empty if not used>",
+    "constraints": "<2-3 word verdict e.g. 'Limits set', 'No constraints', 'Well bounded' — empty if not used>",
+    "audience_framing": "<2-3 word verdict e.g. 'Audience clear', 'Who reads this?', 'Well targeted' — empty if not used>",
+    "zero_shot": "<2-3 word verdict e.g. 'Pure zero-shot', 'No examples used' — empty if examples were given>",
+    "self_reflection": "<2-3 word verdict e.g. 'Review prompted', 'No self-check' — empty if not used>",
+    "iteration": "<2-3 word verdict e.g. 'Layered well', 'Could iterate' — empty if not used>"
   }
 }` }]
         })
@@ -719,13 +891,20 @@ Respond ONLY with valid JSON, no markdown, no extra text:
   "total": <0-100>,
   "feedback": "<2 sentences of constructive feedback>",
   "techniques": {
-    "role_prompting": "<2-3 word verdict on their role/persona usage e.g. 'Good role set', 'Persona missing', 'Strong character' — empty string if they did not use it>",
-    "few_shot": "<2-3 word verdict on their use of examples e.g. 'Examples given', 'No examples', 'Needs examples' — empty string if they did not use it>",
-    "chain_of_thought": "<2-3 word verdict on step-by-step reasoning e.g. 'Steps prompted', 'Add reasoning steps', 'Logical flow set' — empty string if they did not use it>",
-    "instruction": "<2-3 word verdict on their core instruction e.g. 'Crystal clear', 'Too broad', 'Needs focus', 'Spot on' — always non-empty>",
-    "context": "<2-3 word verdict on context they gave e.g. 'Context is strong', 'Needs more context', 'Background provided' — empty string if they did not use it>",
-    "input": "<2-3 word verdict on input/data they gave e.g. 'Input defined', 'Data missing', 'Good reference' — empty string if they did not use it>",
-    "output_format": "<2-3 word verdict on output format e.g. 'Format specified', 'Format missing', 'Structure defined' — empty string if they did not use it>"
+    "role_prompting": "<2-3 word verdict e.g. 'Good role set', 'Persona missing' — empty if not used>",
+    "instruction": "<2-3 word verdict e.g. 'Crystal clear', 'Too broad', 'Spot on' — always non-empty>",
+    "context": "<2-3 word verdict e.g. 'Context strong', 'Needs context' — empty if not used>",
+    "input": "<2-3 word verdict e.g. 'Input defined', 'Data missing' — empty if not used>",
+    "output_format": "<2-3 word verdict e.g. 'Format specified', 'Format missing' — empty if not used>",
+    "chain_of_thought": "<2-3 word verdict e.g. 'Steps prompted', 'Add reasoning' — empty if not used>",
+    "few_shot": "<2-3 word verdict e.g. 'Examples given', 'No examples' — empty if not used>",
+    "specificity": "<2-3 word verdict e.g. 'Very specific', 'Too generic', 'Needs numbers' — always non-empty>",
+    "tone_voice": "<2-3 word verdict e.g. 'Tone defined', 'Tone missing', 'Voice clear' — empty if not used>",
+    "constraints": "<2-3 word verdict e.g. 'Limits set', 'No constraints', 'Well bounded' — empty if not used>",
+    "audience_framing": "<2-3 word verdict e.g. 'Audience clear', 'Who reads this?', 'Well targeted' — empty if not used>",
+    "zero_shot": "<2-3 word verdict e.g. 'Pure zero-shot', 'No examples used' — empty if they gave examples>",
+    "self_reflection": "<2-3 word verdict e.g. 'Review prompted', 'No self-check' — empty if not used>",
+    "iteration": "<2-3 word verdict e.g. 'Good iteration', 'Could refine more' — empty if not used>"
   }
 }` }]
         })
@@ -818,12 +997,19 @@ Respond ONLY with valid JSON, no markdown, no extra text:
     if (e.techniques) {
       const TMETA = {
         role_prompting:   { icon:"🎭", label:"Role Prompting",   cls:"tbadge-role"    },
-        few_shot:         { icon:"📋", label:"Few-Shot",         cls:"tbadge-fewshot"  },
-        chain_of_thought: { icon:"🔗", label:"Chain-of-Thought", cls:"tbadge-cot"      },
-        instruction:      { icon:"📌", label:"Instruction",      cls:"tbadge-instr"    },
-        context:          { icon:"🌐", label:"Context",          cls:"tbadge-context"  },
-        input:            { icon:"📥", label:"Input",            cls:"tbadge-input"    },
-        output_format:    { icon:"📤", label:"Output Format",    cls:"tbadge-output"   },
+        instruction:      { icon:"📌", label:"Instruction",      cls:"tbadge-instr"   },
+        context:          { icon:"🌐", label:"Context",          cls:"tbadge-context" },
+        input:            { icon:"📥", label:"Input",            cls:"tbadge-input"   },
+        output_format:    { icon:"📤", label:"Output Format",    cls:"tbadge-output"  },
+        chain_of_thought: { icon:"🔗", label:"Chain-of-Thought", cls:"tbadge-cot"     },
+        few_shot:         { icon:"📋", label:"Few-Shot",         cls:"tbadge-fewshot" },
+        specificity:      { icon:"🎯", label:"Specificity",      cls:"tbadge-instr"   },
+        tone_voice:       { icon:"🗣️", label:"Tone & Voice",     cls:"tbadge-context" },
+        constraints:      { icon:"🚫", label:"Constraints",      cls:"tbadge-output"  },
+        audience_framing: { icon:"🎪", label:"Audience Framing", cls:"tbadge-role"    },
+        zero_shot:        { icon:"⚡", label:"Zero-Shot",        cls:"tbadge-fewshot" },
+        self_reflection:  { icon:"🪞", label:"Self-Reflection",  cls:"tbadge-cot"     },
+        iteration:        { icon:"🔁", label:"Iteration",        cls:"tbadge-input"   },
       };
       const chips = Object.entries(e.techniques)
         .filter(([k,v]) => v && String(v).trim())
@@ -863,13 +1049,20 @@ Respond ONLY with valid JSON, no markdown, no extra text:
   });
 
   const TECHNIQUE_META = {
-    role_prompting: { label: "Role Prompting", cls: "tbadge-role",    icon: "🎭" },
-    few_shot:       { label: "Few-Shot",        cls: "tbadge-fewshot", icon: "📋" },
-    chain_of_thought:{ label: "Chain-of-Thought",cls: "tbadge-cot",   icon: "🔗" },
-    instruction:    { label: "Instruction",     cls: "tbadge-instr",   icon: "📌" },
-    context:        { label: "Context",         cls: "tbadge-context", icon: "🌐" },
-    input:          { label: "Input",           cls: "tbadge-input",   icon: "📥" },
-    output_format:  { label: "Output Format",   cls: "tbadge-output",  icon: "📤" },
+    role_prompting:   { label: "Role Prompting",    cls: "tbadge-role",    icon: "🎭" },
+    instruction:      { label: "Instruction",       cls: "tbadge-instr",   icon: "📌" },
+    context:          { label: "Context",           cls: "tbadge-context", icon: "🌐" },
+    input:            { label: "Input",             cls: "tbadge-input",   icon: "📥" },
+    output_format:    { label: "Output Format",     cls: "tbadge-output",  icon: "📤" },
+    chain_of_thought: { label: "Chain-of-Thought",  cls: "tbadge-cot",    icon: "🔗" },
+    few_shot:         { label: "Few-Shot",          cls: "tbadge-fewshot", icon: "📋" },
+    specificity:      { label: "Specificity",       cls: "tbadge-instr",   icon: "🎯" },
+    tone_voice:       { label: "Tone & Voice",      cls: "tbadge-context", icon: "🗣️" },
+    constraints:      { label: "Constraints",       cls: "tbadge-output",  icon: "🚫" },
+    audience_framing: { label: "Audience Framing",  cls: "tbadge-role",    icon: "🎪" },
+    zero_shot:        { label: "Zero-Shot",         cls: "tbadge-fewshot", icon: "⚡" },
+    self_reflection:  { label: "Self-Reflection",   cls: "tbadge-cot",    icon: "🪞" },
+    iteration:        { label: "Iteration",         cls: "tbadge-input",   icon: "🔁" },
   };
 
   function buildTechniqueBadges(techniques) {
@@ -1001,17 +1194,151 @@ Respond ONLY with valid JSON, no markdown, no extra text:
   function closePw() { document.getElementById("pwOverlay").classList.remove("open"); }
 
   function activateHost() {
+    PARTICIPANT_TABS.forEach(t => {
+      const el = document.getElementById(t);
+      if (el) el.classList.remove("active");
+      const btn = document.getElementById(t + "Tab");
+      if (btn) btn.classList.remove("active");
+    });
     document.getElementById("host").classList.add("active");
-    document.getElementById("participant").classList.remove("active");
     document.getElementById("hostTab").classList.add("active");
-    document.getElementById("participantTab").classList.remove("active");
   }
 
-  function showParticipant() {
-    document.getElementById("participant").classList.add("active");
+  const PARTICIPANT_TABS = ["compete","learn","practice"];
+
+  function showTab(tab) {
+    // deactivate all participant tabs
+    PARTICIPANT_TABS.forEach(t => {
+      const el = document.getElementById(t);
+      if (el) el.classList.remove("active");
+      const btn = document.getElementById(t + "Tab");
+      if (btn) btn.classList.remove("active");
+    });
     document.getElementById("host").classList.remove("active");
-    document.getElementById("participantTab").classList.add("active");
     document.getElementById("hostTab").classList.remove("active");
+    const target = document.getElementById(tab);
+    if (target) target.classList.add("active");
+    const tabBtn = document.getElementById(tab + "Tab");
+    if (tabBtn) tabBtn.classList.add("active");
+  }
+
+  function showParticipant() { showTab("compete"); }
+
+  /* ── PRACTICE TAB ── */
+  let practiceHistory = [];
+
+  window.loadPracticeTask = function() {
+    const val = document.getElementById("practiceTaskSelect").value;
+    document.getElementById("practiceTaskBox").textContent = val || "select a task above to begin…";
+    document.getElementById("practicePrompt").value = "";
+    document.getElementById("practiceResult").style.display = "none";
+    document.getElementById("practiceStatus").innerHTML = "";
+    document.getElementById("practiceBtn").disabled = false;
+  };
+
+  window.submitPracticePrompt = async function() {
+    const task = document.getElementById("practiceTaskBox").textContent;
+    const prompt = document.getElementById("practicePrompt").value.trim();
+    if (!task || task.includes("select a task")) return alert("pick a task first");
+    if (!prompt) return alert("write a prompt first");
+
+    const btn = document.getElementById("practiceBtn");
+    const status = document.getElementById("practiceStatus");
+    btn.disabled = true;
+    status.innerHTML = '<div class="status"><div class="spinner"></div>scoring your prompt…</div>';
+
+    try {
+      const response = await fetch("https://damp-grass-a764.rishal66.workers.dev", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514", max_tokens: 1200,
+          messages: [{ role: "user", content: `You are a strict prompt quality judge and educator. Score this prompt and identify which prompt engineering techniques the writer used.
+
+Task: ${task}
+Submitted prompt: ${prompt}
+
+Respond ONLY with valid JSON, no markdown, no extra text:
+{
+  "clarity": <0-50>,
+  "output": <0-50>,
+  "total": <0-100>,
+  "feedback": "<2 sentences of constructive feedback>",
+  "techniques": {
+    "role_prompting": "<2-3 word verdict e.g. 'Good role set', 'Persona missing' — empty if not used>",
+    "instruction": "<2-3 word verdict e.g. 'Crystal clear', 'Too broad' — always non-empty>",
+    "context": "<2-3 word verdict e.g. 'Context strong', 'Needs context' — empty if not used>",
+    "input": "<2-3 word verdict e.g. 'Input defined', 'Data missing' — empty if not used>",
+    "output_format": "<2-3 word verdict e.g. 'Format specified', 'Format missing' — empty if not used>",
+    "chain_of_thought": "<2-3 word verdict e.g. 'Steps prompted', 'Add reasoning' — empty if not used>",
+    "few_shot": "<2-3 word verdict e.g. 'Examples given', 'No examples' — empty if not used>",
+    "specificity": "<2-3 word verdict e.g. 'Very specific', 'Too generic' — always non-empty>",
+    "tone_voice": "<2-3 word verdict e.g. 'Tone defined', 'Tone missing' — empty if not used>",
+    "constraints": "<2-3 word verdict e.g. 'Limits set', 'No constraints' — empty if not used>",
+    "audience_framing": "<2-3 word verdict e.g. 'Audience clear', 'Who reads this?' — empty if not used>",
+    "zero_shot": "<2-3 word verdict e.g. 'Pure zero-shot' — empty if examples were given>",
+    "self_reflection": "<2-3 word verdict e.g. 'Review prompted', 'No self-check' — empty if not used>",
+    "iteration": "<2-3 word verdict e.g. 'Good iteration', 'Could refine more' — empty if not used>"
+  }
+}` }]
+        })
+      });
+      const data = await response.json();
+      const text = data.content.map(b => b.text || "").join("");
+      let result; try { result = JSON.parse(text); } catch(e) { const m = text.match(/\{[\s\S]*\}/); result = m ? JSON.parse(m[0]) : null; }
+      if (!result) throw new Error();
+
+      status.innerHTML = "";
+
+      // Add to history
+      const shortTask = task.length > 40 ? task.slice(0,40) + "…" : task;
+      practiceHistory.unshift({ task: shortTask, prompt, score: result.total, clarity: result.clarity, output: result.output, feedback: result.feedback, techniques: result.techniques });
+      renderPracticeLeaderboard();
+
+      // Show result
+      const vibe = result.total >= 85 ? "absolute cooking 🔥" : result.total >= 70 ? "not bad, chef 👨‍🍳" : result.total >= 50 ? "mid but we see u 👀" : "we'll try again 💀";
+      const techHtml = typeof buildTechniqueBadges === "function" ? buildTechniqueBadges(result.techniques) : "";
+      document.getElementById("practiceResult").style.display = "block";
+      document.getElementById("practiceResult").innerHTML = `
+        <div class="result-card">
+          <div class="score-kicker">${vibe}</div>
+          <div class="score-big">${Math.round(result.total)}<span class="score-denom">/100</span></div>
+          <div class="score-breakdown">
+            <div class="breakdown-pill">clarity <strong>${Math.round(result.clarity)}/50</strong></div>
+            <div class="breakdown-pill">output quality <strong>${Math.round(result.output)}/50</strong></div>
+          </div>
+          <div class="feedback">${esc(result.feedback)}</div>
+          ${techHtml}
+        </div>`;
+
+      btn.textContent = "try again →";
+      btn.disabled = false;
+      btn.onclick = () => {
+        document.getElementById("practicePrompt").value = "";
+        document.getElementById("practiceResult").style.display = "none";
+        btn.textContent = "score my prompt →";
+        btn.onclick = window.submitPracticePrompt;
+        btn.disabled = false;
+      };
+
+    } catch(e) {
+      status.innerHTML = '<div class="status" style="color:#fca5a5">scoring failed — try again</div>';
+      btn.disabled = false;
+    }
+  };
+
+  function renderPracticeLeaderboard() {
+    const lb = document.getElementById("practiceLb");
+    if (!practiceHistory.length) { lb.innerHTML = '<div class="lb-empty">no attempts yet — pick a task and go!</div>'; return; }
+    const sorted = [...practiceHistory].sort((a,b) => b.score - a.score);
+    const best = sorted[0].score;
+    lb.innerHTML = sorted.map((e,i) => {
+      const isBest = e.score === best && i === 0;
+      return `<div class="practice-lb-entry ${isBest ? 'practice-best' : ''}">
+        <span style="font-size:16px;">${isBest ? '🏆' : '#' + (i+1)}</span>
+        <span class="practice-lb-task">${esc(e.task)}</span>
+        <span class="practice-lb-score" style="color:${e.score >= 70 ? 'var(--mint)' : e.score >= 50 ? 'var(--gold)' : '#f87171'}">${Math.round(e.score)}</span>
+      </div>`;
+    }).join("") + `<div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:10px;text-align:center;">${practiceHistory.length} attempt${practiceHistory.length !== 1 ? 's' : ''} this session</div>`;
   }
 
   /* detail modal functions are handled in the module script above */
