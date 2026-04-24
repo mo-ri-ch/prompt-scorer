@@ -161,7 +161,7 @@
     .p-label { font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
     .p-label .num { background: var(--surface2); color: var(--text2); padding: 2px 10px; border-radius: 999px; font-weight: 600; font-size: 11px; }
 
-    .p-task-box { background: linear-gradient(135deg,rgba(167,139,250,.07),rgba(244,114,182,.07)); border: 1px solid rgba(167,139,250,.25); border-radius: 16px; padding: 20px 20px 20px 32px; font-family: var(--serif); font-size: clamp(20px, 4.5vw, 26px); font-style: italic; line-height: 1.45; color: var(--text); margin-bottom: 24px; position: relative; }
+    .p-task-box { background: linear-gradient(135deg,rgba(167,139,250,.07),rgba(244,114,182,.07)); border: 1px solid rgba(167,139,250,.25); border-radius: 16px; padding: 16px 16px 16px 32px; font-family: var(--serif); font-size: 18px; font-style: italic; line-height: 1.55; color: var(--text); margin-bottom: 20px; position: relative; word-break: break-word; overflow-wrap: break-word; white-space: normal; }
     .p-task-box::before { content: "\201C"; position: absolute; top: -4px; left: 12px; font-family: var(--serif); font-size: 44px; color: var(--violet); opacity: 0.45; line-height: 1; }
 
     .p-input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; padding: 15px; color: var(--text); font-size: 17px; line-height: 1.65; font-family: var(--sans); outline: none; transition: all 0.2s; }
@@ -170,6 +170,32 @@
     textarea.p-input { resize: vertical; min-height: 140px; }
 
     .submit-btn { width: 100%; margin-top: 14px; padding: 16px; border-radius: 14px; border: none; background: linear-gradient(135deg,var(--mint),var(--violet)); color: #08080f; font-family: var(--sans); font-size: 18px; font-weight: 800; letter-spacing: -0.3px; cursor: pointer; transition: all 0.22s; }
+
+    /* ── COLLAPSIBLE SECTIONS ── */
+    .collapsible { border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 16px; }
+    .collapsible-header { display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; cursor: pointer; background: var(--surface2); font-family: var(--mono); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); user-select: none; transition: background .15s; gap: 10px; }
+    .collapsible-header:hover { background: var(--surface3); color: var(--text); }
+    .collapsible-header .ch-icon { font-size: 15px; flex-shrink: 0; }
+    .collapsible-header .ch-arrow { font-size: 12px; transition: transform .25s; flex-shrink: 0; }
+    .collapsible-header.open .ch-arrow { transform: rotate(180deg); }
+    .collapsible-body { display: none; padding: 16px; background: var(--surface); border-top: 1px solid var(--border); }
+    .collapsible-body.open { display: block; }
+
+    /* Example QA */
+    .example-task { font-family: var(--serif); font-size: 15px; font-style: italic; color: var(--text2); line-height: 1.5; margin-bottom: 14px; padding: 12px 14px; background: var(--surface2); border-radius: 10px; border-left: 3px solid var(--violet); }
+    .example-label { font-family: var(--mono); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin-bottom: 6px; }
+    .example-weak { font-size: 14px; color: var(--text2); line-height: 1.6; padding: 10px 14px; background: rgba(248,113,113,.06); border: 1px solid rgba(248,113,113,.2); border-radius: 10px; margin-bottom: 10px; }
+    .example-strong { font-size: 14px; color: var(--text2); line-height: 1.6; padding: 10px 14px; background: rgba(110,231,183,.06); border: 1px solid rgba(110,231,183,.2); border-radius: 10px; }
+    .example-verdict { font-family: var(--mono); font-size: 11px; font-weight: 700; margin-bottom: 5px; }
+    .example-verdict.weak { color: #f87171; }
+    .example-verdict.strong { color: var(--mint); }
+
+    /* Technique definitions */
+    .def-list { display: flex; flex-direction: column; gap: 10px; }
+    .def-item { display: flex; gap: 12px; align-items: flex-start; }
+    .def-badge { flex-shrink: 0; padding: 4px 10px; border-radius: 999px; font-family: var(--mono); font-size: 11px; font-weight: 700; border: 1px solid; white-space: nowrap; }
+    .def-text { font-size: 14px; color: var(--text2); line-height: 1.55; }
+    .def-text strong { color: var(--text); font-weight: 700; }
     .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 36px rgba(110,231,183,.3); }
     .submit-btn:active { transform: translateY(0); }
     .submit-btn:disabled { opacity: .4; cursor: not-allowed; transform: none; box-shadow: none; }
@@ -931,7 +957,7 @@ Respond ONLY with valid JSON, no markdown, no extra text:
   };
 
   /* ── PASSWORD ── */
-  const HOST_PASSWORD = "rishal2025";
+  const HOST_PASSWORD = "rishal456";
 
   function blockPaste(e) {
     e.preventDefault();
@@ -946,6 +972,12 @@ Respond ONLY with valid JSON, no markdown, no extra text:
   function loadPreset() {
     const val = document.getElementById("presetSelect").value;
     if (val) { const ta = document.getElementById("taskInput"); ta.value = val; ta.dataset.edited = "1"; }
+  }
+
+  function toggleCollapse(header) {
+    header.classList.toggle("open");
+    const body = header.nextElementSibling;
+    body.classList.toggle("open");
   }
 
   function requestHost() {
