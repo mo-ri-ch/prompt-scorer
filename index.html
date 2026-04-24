@@ -320,7 +320,7 @@
     /* ── DETAIL MODAL ── */
     .detail-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(14px); z-index:300; align-items:center; justify-content:center; padding:20px; }
     .detail-overlay.open { display:flex; }
-    .detail-box { background:var(--card-bg); border:1px solid var(--border2); border-radius:20px; padding:18px 22px; width:100%; max-width:880px; max-height:92vh; position:relative; animation:slide-up .35s cubic-bezier(.34,1.56,.64,1); display:grid; grid-template-columns:190px 1fr; gap:0 24px; overflow-y:auto; align-items:start; }
+    .detail-box { background:var(--card-bg); border:1px solid var(--border2); border-radius:20px; padding:18px 22px; width:100%; max-width:880px; max-height:92vh; position:relative; animation:slide-up .35s cubic-bezier(.34,1.56,.64,1); display:grid; grid-template-columns:180px 1fr; gap:0 16px; overflow-y:auto; align-items:start; }
     .detail-close { position:absolute; top:14px; right:14px; width:28px; height:28px; border-radius:50%; border:1px solid var(--border2); background:var(--surface2); color:var(--muted); font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .2s; grid-column:1/-1; z-index:1; }
     .detail-close:hover { background:var(--surface3); color:var(--text); }
     .detail-close { width:26px !important; height:26px !important; }
@@ -673,7 +673,7 @@
     <button class="detail-close" onclick="closeDetailModal()" style="position:absolute;top:14px;right:14px;grid-column:unset;">&#x2715;</button>
 
     <!-- Left column: identity + score -->
-    <div style="display:flex;flex-direction:column;justify-content:flex-start;padding-top:0;">
+    <div style="display:flex;flex-direction:column;justify-content:flex-start;padding-top:0;background:var(--surface2);border-radius:12px;padding:14px 16px;margin-right:4px;">
       <div class="detail-rank" id="detailRank"></div>
       <div class="detail-name" id="detailName"></div>
       <div class="detail-score-row">
