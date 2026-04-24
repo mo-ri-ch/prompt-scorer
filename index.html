@@ -144,7 +144,13 @@
     .lb-score { font-family: var(--mono); font-size: 16px; font-weight: 800; min-width: 32px; max-width: 42px; text-align: right; flex-shrink: 0; }
 
     /* ── PARTICIPANT VIEW ── */
-    .p-wrap { max-width: 500px; margin: 0 auto; }
+    .p-layout { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 20px; max-width: 1180px; margin: 0 auto; align-items: start; }
+    .p-wrap { min-width: 0; }
+    .p-lb-panel { min-width: 0; position: sticky; top: 20px; }
+    @media (max-width: 760px) {
+      .p-layout { grid-template-columns: 1fr; }
+      .p-lb-panel { position: static; }
+    }
     .p-hero { text-align: center; margin-bottom: 28px; padding-top: 8px; }
     .p-hero-kicker { font-family: var(--mono); font-size: 13px; color: var(--mint); text-transform: uppercase; letter-spacing: 0.3em; margin-bottom: 10px; }
     .p-hero-title { font-family: var(--serif); font-size: clamp(38px, 9vw, 60px); font-style: italic; line-height: 1.05; letter-spacing: -1px; }
@@ -408,34 +414,48 @@
 
 <!-- PARTICIPANT VIEW -->
 <div id="participant" class="view active">
-  <div class="p-wrap">
-    <div class="p-hero">
-      <div class="p-hero-kicker">⛳ prompt competition</div>
-      <div class="p-hero-title">write the <span class="spin">✦</span> <em>best</em> prompt</div>
-      <div class="p-hero-sub">score points · flex on your friends · learn prompting</div>
+  <div class="p-layout">
+
+    <!-- LEFT: submit area -->
+    <div class="p-wrap">
+      <div class="p-hero">
+        <div class="p-hero-kicker">⛳ prompt competition</div>
+        <div class="p-hero-title">write the <span class="spin">✦</span> <em>best</em> prompt</div>
+        <div class="p-hero-sub">score points · flex on your friends · learn prompting</div>
+      </div>
+
+      <div class="p-label">your task <span class="num">01</span></div>
+      <div class="p-task-box" id="pTaskBox">waiting for the host to drop the task…</div>
+
+      <div id="submitArea">
+        <div class="p-label">your name <span class="num">what should we call you?</span></div>
+        <input class="p-input" id="pName" type="text" placeholder="handle / name" maxlength="30" />
+        <div class="p-label">your prompt <span class="num">no paste — type it ✎</span></div>
+        <textarea class="p-input" id="pPrompt" placeholder="type your best prompt here…"
+          onpaste="return blockPaste(event)"
+          oncopy="return blockPaste(event)"
+          oncut="return blockPaste(event)"
+          ondrop="return blockPaste(event)"
+          ondragover="event.preventDefault()"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+        <button class="submit-btn" id="submitBtn" onclick="submitPrompt()">submit <span class="arrow">→</span></button>
+        <div id="statusMsg"></div>
+      </div>
+
+      <div id="resultArea" style="display:none;"></div>
+      <div id="alreadyArea" style="display:none;"></div>
+      <div id="participantIdealBox" style="display:none;"></div>
     </div>
 
-    <div class="p-label">your task <span class="num">01</span></div>
-    <div class="p-task-box" id="pTaskBox">waiting for the host to drop the task…</div>
-
-    <div id="submitArea">
-      <div class="p-label">your name <span class="num">what should we call you?</span></div>
-      <input class="p-input" id="pName" type="text" placeholder="handle / name" maxlength="30" />
-      <div class="p-label">your prompt <span class="num">no paste — type it ✎</span></div>
-      <textarea class="p-input" id="pPrompt" placeholder="type your best prompt here…"
-        onpaste="return blockPaste(event)"
-        oncopy="return blockPaste(event)"
-        oncut="return blockPaste(event)"
-        ondrop="return blockPaste(event)"
-        ondragover="event.preventDefault()"
-        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
-      <button class="submit-btn" id="submitBtn" onclick="submitPrompt()">submit <span class="arrow">→</span></button>
-      <div id="statusMsg"></div>
+    <!-- RIGHT: live leaderboard -->
+    <div class="p-lb-panel panel">
+      <div class="panel-label">live scoreboard 🏆</div>
+      <div class="leaderboard" id="participantLeaderboard">
+        <div class="lb-empty">waiting for the goats…</div>
+      </div>
+      <div id="participantIdealBox2" style="display:none;"></div>
     </div>
 
-    <div id="resultArea" style="display:none;"></div>
-    <div id="alreadyArea" style="display:none;"></div>
-    <div id="participantIdealBox" style="display:none;"></div>
   </div>
 </div>
 
@@ -572,12 +592,16 @@
     const hideBtn = document.getElementById("hideRevealBtn");
     if (data && data.prompt) {
       const html = `<div class="ideal-box"><div class="ideal-label">✨ the GOAT prompt</div><div class="ideal-text">${esc(data.prompt)}</div>${data.tips?`<div class="ideal-tips"><strong>why it slaps</strong>${esc(data.tips)}</div>`:""} ${data.techniques ? buildTechniqueBadges(data.techniques) : ""}</div>`;
+      const partBox2 = document.getElementById("participantIdealBox2");
       hostBox.innerHTML = html; hostBox.style.display = "block";
       partBox.innerHTML = html; partBox.style.display = "block";
+      if (partBox2) { partBox2.innerHTML = html; partBox2.style.display = "block"; }
       if (revealBtn) revealBtn.style.display = "none";
       if (hideBtn) hideBtn.style.display = "block";
     } else {
+      const partBox2b = document.getElementById("participantIdealBox2");
       hostBox.style.display = "none"; partBox.style.display = "none";
+      if (partBox2b) partBox2b.style.display = "none";
       if (revealBtn) { revealBtn.style.display = "block"; revealBtn.disabled = false; revealBtn.innerHTML = "✨ reveal the GOAT prompt"; }
       if (hideBtn) hideBtn.style.display = "none";
     }
@@ -707,6 +731,22 @@ Respond ONLY with valid JSON, no markdown, no extra text:
       btn.disabled = false;
     }
   };
+
+  function renderParticipantLeaderboard(entries) {
+    const lb = document.getElementById("participantLeaderboard");
+    if (!lb) return;
+    if (!entries.length) { lb.innerHTML = '<div class="lb-empty">waiting for the goats…</div>'; return; }
+    lb.innerHTML = entries.map((e,i) => {
+      const medal = i===0?"🥇":i===1?"🥈":i===2?"🥉":`${i+1}`;
+      const cls = i===0?"lb-entry rank-1":i===1?"lb-entry rank-2":i===2?"lb-entry rank-3":"lb-entry";
+      return `<div class="${cls}">
+        <span class="lb-rank">${medal}</span>
+        <span class="lb-name">${esc(e.name)}</span>
+        <div class="lb-bar-wrap"><div class="lb-bar" style="width:${Math.round(e.score)}%"></div></div>
+        <span class="lb-score">${Math.round(e.score)}</span>
+      </div>`;
+    }).join("");
+  }
 
   window._allEntries = [];
   function renderLeaderboard(entries) {
