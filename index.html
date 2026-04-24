@@ -274,7 +274,7 @@
     .practice-left { min-width: 0; }
     .practice-right { min-width: 0; position: sticky; top: 20px; }
     .practice-lb-entry { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface2); margin-bottom: 6px; }
-    .practice-lb-task { font-family: var(--mono); font-size: 11px; color: var(--muted); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .practice-lb-name { font-size: 14px; font-weight: 700; color: var(--text); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .practice-lb-score { font-family: var(--mono); font-size: 16px; font-weight: 800; flex-shrink: 0; }
     .practice-best { background: linear-gradient(90deg,rgba(251,191,36,.1),transparent); border-color: rgba(251,191,36,.35) !important; }
     @media (max-width: 900px) {
@@ -601,7 +601,7 @@
       <div class="p-hero" style="text-align:left;margin-bottom:20px;">
         <div class="p-hero-kicker">✍️ self practice</div>
         <div class="p-hero-title" style="font-size:clamp(28px,5vw,42px);">test yourself</div>
-        <div class="p-hero-sub">pick a task, write a prompt, get scored instantly</div>
+        <div class="p-hero-sub">pick a task · write a prompt · get scored · track your best</div>
       </div>
 
       <div class="p-label">choose a task</div>
@@ -635,7 +635,9 @@
       <div class="p-label">the task</div>
       <div class="p-task-box" id="practiceTaskBox" style="font-size:16px;min-height:52px;">select a task above to begin…</div>
 
-      <div class="p-label" style="margin-top:16px;">your prompt <span class="num">type it manually ✎</span></div>
+      <div class="p-label" style="margin-top:16px;">your name</div>
+      <input class="p-input" id="practiceNameInput" type="text" placeholder="your name or handle" maxlength="30" style="margin-bottom:12px;" />
+      <div class="p-label">your prompt <span class="num">type it manually ✎</span></div>
       <textarea class="p-input" id="practicePrompt" placeholder="write your prompt here…" style="min-height:140px;"></textarea>
 
       <button class="submit-btn" id="practiceBtn" onclick="submitPracticePrompt()" style="margin-top:12px;">score my prompt <span class="arrow">→</span></button>
@@ -644,9 +646,16 @@
     </div>
 
     <div class="practice-right panel">
-      <div class="panel-label">your practice scores 📈</div>
-      <div id="practiceLb" style="display:flex;flex-direction:column;gap:8px;">
-        <div class="lb-empty">no attempts yet — pick a task and go!</div>
+      <div class="panel-label">task leaderboard 📊</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px;">
+        <div id="practiceLbTitle" style="font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;flex:1;">pick a task to begin</div>
+        <button id="resetTaskLbBtn" onclick="resetTaskLeaderboard()" style="display:none;padding:4px 10px;border-radius:8px;border:1px solid rgba(248,113,113,.3);background:transparent;color:#fca5a5;font-family:var(--mono);font-size:10px;cursor:pointer;">reset</button>
+      </div>
+      <div id="practiceLb" style="display:flex;flex-direction:column;gap:6px;">
+        <div class="lb-empty">pick a task above to begin</div>
+      </div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:14px;padding-top:12px;border-top:1px solid var(--border);line-height:1.6;">
+        🔒 local only — not visible to others<br>each task keeps its own board
       </div>
     </div>
 
@@ -1090,10 +1099,13 @@ Respond ONLY with valid JSON, no markdown, no extra text:
   window._buildTechniqueBadges = buildTechniqueBadges;
 
   /* ── PRACTICE TAB (needs esc + buildTechniqueBadges from module) ── */
-  let practiceHistory = [];
+  // practiceScores: { [taskKey]: [ {name, score, ts}, ... ] }
+  let practiceScores = {};
+  let currentPracticeTask = "";
 
   window.loadPracticeTask = function() {
     const val = document.getElementById("practiceTaskSelect").value;
+    currentPracticeTask = val;
     document.getElementById("practiceTaskBox").textContent = val || "select a task above to begin…";
     document.getElementById("practicePrompt").value = "";
     document.getElementById("practiceResult").style.display = "none";
@@ -1101,6 +1113,7 @@ Respond ONLY with valid JSON, no markdown, no extra text:
     document.getElementById("practiceBtn").disabled = false;
     document.getElementById("practiceBtn").textContent = "score my prompt →";
     document.getElementById("practiceBtn").onclick = window.submitPracticePrompt;
+    renderPracticeLeaderboard();
   };
 
   window.submitPracticePrompt = async function() {
@@ -1158,8 +1171,10 @@ Respond ONLY with valid JSON, no markdown, no extra text:
 
       status.innerHTML = "";
 
-      const shortTask = task.length > 40 ? task.slice(0,40) + "…" : task;
-      practiceHistory.unshift({ task: shortTask, prompt, score: result.total, clarity: result.clarity, output: result.output, feedback: result.feedback, techniques: result.techniques });
+      const nameInput = document.getElementById("practiceNameInput");
+      const entryName = nameInput ? nameInput.value.trim() || "You" : "You";
+      if (!practiceScores[task]) practiceScores[task] = [];
+      practiceScores[task].unshift({ name: entryName, score: result.total, clarity: result.clarity, output: result.output, feedback: result.feedback, techniques: result.techniques, ts: Date.now() });
       renderPracticeLeaderboard();
 
       const vibe = result.total >= 85 ? "absolute cooking 🔥" : result.total >= 70 ? "not bad, chef 👨‍🍳" : result.total >= 50 ? "mid but we see u 👀" : "we will try again 💀";
@@ -1194,23 +1209,52 @@ Respond ONLY with valid JSON, no markdown, no extra text:
     }
   };
 
+  window.resetTaskLeaderboard = function() {
+    if (!currentPracticeTask) return;
+    if (!confirm("Clear the leaderboard for this task?")) return;
+    delete practiceScores[currentPracticeTask];
+    renderPracticeLeaderboard();
+  };
+
   function renderPracticeLeaderboard() {
     const lb = document.getElementById("practiceLb");
+    const lbTitle = document.getElementById("practiceLbTitle");
     if (!lb) return;
-    if (!practiceHistory.length) { lb.innerHTML = '<div class="lb-empty">no attempts yet — pick a task and go!</div>'; return; }
-    const sorted = [...practiceHistory].sort((a,b) => b.score - a.score);
-    const best = sorted[0].score;
-    lb.innerHTML = sorted.map((e,i) => {
-      const isBest = e.score === best && i === 0;
+    const task = currentPracticeTask;
+    const entries = task && practiceScores[task] ? [...practiceScores[task]] : [];
+    entries.sort((a,b) => b.score - a.score);
+
+    const resetBtn = document.getElementById("resetTaskLbBtn");
+    if (lbTitle) {
+      if (task) {
+        const select = document.getElementById("practiceTaskSelect");
+        const opt = select ? select.options[select.selectedIndex] : null;
+        const label = opt && opt.text ? opt.text : "this task";
+        lbTitle.textContent = label;
+      } else {
+        lbTitle.textContent = "pick a task to begin";
+      }
+    }
+    if (resetBtn) resetBtn.style.display = (entries.length > 0) ? "block" : "none";
+
+    if (!entries.length) {
+      lb.innerHTML = '<div class="lb-empty">' + (task ? 'no attempts yet — go!' : 'pick a task above') + '</div>';
+      return;
+    }
+
+    const best = entries[0].score;
+    lb.innerHTML = entries.map((e,i) => {
+      const isBest = i === 0;
+      const medal = i===0?"🥇":i===1?"🥈":i===2?"🥉":"#"+(i+1);
       const scoreColor = e.score >= 70 ? 'var(--mint)' : e.score >= 50 ? 'var(--gold)' : '#f87171';
       return '<div class="practice-lb-entry ' + (isBest ? 'practice-best' : '') + '">' +
-        '<span style="font-size:16px;">' + (isBest ? '🏆' : '#' + (i+1)) + '</span>' +
-        '<span class="practice-lb-task">' + esc(e.task) + '</span>' +
+        '<span style="font-size:' + (i<3?'18':'14') + 'px;min-width:28px;">' + medal + '</span>' +
+        '<span class="practice-lb-name">' + esc(e.name) + '</span>' +
         '<span class="practice-lb-score" style="color:' + scoreColor + '">' + Math.round(e.score) + '</span>' +
-        '</div>';
+      '</div>';
     }).join("") +
     '<div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:10px;text-align:center;">' +
-    practiceHistory.length + ' attempt' + (practiceHistory.length !== 1 ? 's' : '') + ' this session</div>';
+    entries.length + ' attempt' + (entries.length !== 1 ? 's' : '') + ' on this task</div>';
   }
 </script>
 
