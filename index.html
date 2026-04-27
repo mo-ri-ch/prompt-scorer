@@ -453,7 +453,12 @@
   <div class="host-layout">
     <div class="host-left">
       <div class="panel">
-        <div class="panel-label accent">the task ✎</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div class="panel-label accent" style="margin-bottom:0;">the task ✎</div>
+          <select id="roundSelector" class="preset-select" style="width:auto;max-width:200px;margin:0;font-size:11px;" onchange="switchToRound(this.value)">
+            <option value="">current round</option>
+          </select>
+        </div>
         <select class="preset-select" id="presetSelect" onchange="loadPreset()">
           <option value="">— pick a preset (optional) —</option>
           <optgroup label="✏️ Writing & Communication">
@@ -955,8 +960,10 @@
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
   const taskRef = ref(db, "task");
-  const entriesRef = ref(db, "entries");
   const idealRef = ref(db, "ideal");
+  const taskIdRef = ref(db, "taskId"); // unique ID per task round
+  let currentTaskId = null;
+  let entriesRef = ref(db, "entries/default"); // will be updated per taskId
 
   function getDeviceId() {
     let id = localStorage.getItem("ps_device_id");
@@ -998,6 +1005,28 @@
     checkAlreadySubmitted(t);
   });
 
+  // Listen to taskId — switch leaderboard to new round
+  let entriesListener = null;
+  onValue(taskIdRef, snap => {
+    const tid = snap.val();
+    if (!tid) return;
+    if (tid === currentTaskId) return;
+    currentTaskId = tid;
+    entriesRef = ref(db, "rounds/" + tid + "/entries");
+    // Update host round selector
+    updateRoundSelector();
+    // Re-attach entries listener to new round
+    if (entriesListener) entriesListener();
+    entriesListener = onValue(entriesRef, snap => {
+      const data = snap.val();
+      const entries = data ? Object.values(data) : [];
+      entries.sort((a,b) => { const diff = parseFloat(b.score) - parseFloat(a.score); if (Math.abs(diff) > 0.001) return diff; return (a.ts || 0) - (b.ts || 0); });
+      document.getElementById("subCount").textContent = entries.length + " submission" + (entries.length !== 1 ? "s" : "");
+      renderLeaderboard(entries);
+      renderParticipantLeaderboard(entries);
+    });
+  });
+
   function checkAlreadySubmitted(task) {
     const sub = localStorage.getItem("ps_submission");
     if (localStorage.getItem("ps_submitted_task") === task && sub) showAlreadySubmitted(JSON.parse(sub));
@@ -1030,14 +1059,7 @@
     document.getElementById("alreadyArea").style.display = "none";
   }
 
-  onValue(entriesRef, snap => {
-    const data = snap.val();
-    const entries = data ? Object.values(data) : [];
-    entries.sort((a,b) => { const diff = parseFloat(b.score) - parseFloat(a.score); if (Math.abs(diff) > 0.001) return diff; return (a.ts || 0) - (b.ts || 0); }); // tiebreak by timestamp — earlier wins
-    document.getElementById("subCount").textContent = entries.length + " submission" + (entries.length !== 1 ? "s" : "");
-    renderLeaderboard(entries);
-    renderParticipantLeaderboard(entries);
-  });
+  // Leaderboard updates handled by dynamic taskIdRef listener above
 
   onValue(idealRef, snap => {
     const data = snap.val();
@@ -1060,18 +1082,79 @@
     }
   });
 
+  let allRounds = {}; // { taskId: taskText }
+  let viewingRoundId = null; // null = current
+
+  function updateRoundSelector() {
+    const sel = document.getElementById("roundSelector");
+    if (!sel) return;
+    // Get all rounds from Firebase
+    onValue(ref(db, "rounds"), snap => {
+      const data = snap.val() || {};
+      allRounds = {};
+      Object.keys(data).forEach(tid => { allRounds[tid] = data[tid].task || tid; });
+      sel.innerHTML = '<option value="">current round</option>';
+      // Add past rounds in reverse order
+      Object.keys(allRounds).reverse().forEach(tid => {
+        const opt = document.createElement("option");
+        opt.value = tid;
+        const taskText = allRounds[tid];
+        opt.textContent = (taskText ? taskText.slice(0, 30) + (taskText.length > 30 ? "…" : "") : tid);
+        if (tid === currentTaskId) opt.textContent += " ← current";
+        sel.appendChild(opt);
+      });
+    }, { onlyOnce: true });
+  }
+
+  window.switchToRound = function(tid) {
+    if (!tid) {
+      // Switch back to current round
+      viewingRoundId = null;
+      if (currentTaskId) {
+        onValue(ref(db, "rounds/" + currentTaskId + "/entries"), snap => {
+          const data = snap.val();
+          const entries = data ? Object.values(data) : [];
+          entries.sort((a,b) => { const diff = parseFloat(b.score) - parseFloat(a.score); if (Math.abs(diff) > 0.001) return diff; return (a.ts||0)-(b.ts||0); });
+          document.getElementById("subCount").textContent = entries.length + " submission" + (entries.length!==1?"s":"");
+          renderLeaderboard(entries);
+        }, { onlyOnce: true });
+      }
+      return;
+    }
+    viewingRoundId = tid;
+    // Load that round's entries once (read-only view)
+    onValue(ref(db, "rounds/" + tid + "/entries"), snap => {
+      const data = snap.val();
+      const entries = data ? Object.values(data) : [];
+      entries.sort((a,b) => { const diff = parseFloat(b.score) - parseFloat(a.score); if (Math.abs(diff) > 0.001) return diff; return (a.ts||0)-(b.ts||0); });
+      document.getElementById("subCount").textContent = "round: " + entries.length + " submissions";
+      renderLeaderboard(entries);
+    }, { onlyOnce: true });
+    // Show that round's task text
+    onValue(ref(db, "rounds/" + tid + "/task"), snap => {
+      const t = snap.val();
+      if (t) document.getElementById("taskInput").value = t;
+    }, { onlyOnce: true });
+  };
+
+  // Also save task text in round when setTask is called
   window.setTask = function() {
     const t = document.getElementById("taskInput").value.trim();
     if (!t) return alert("enter a task first bestie");
     document.getElementById("taskInput").dataset.edited = "1";
-    set(taskRef, t); set(idealRef, null);
-    // Reset first entry tracker when new task is set
-    set(ref(db, "firstEntry"), null);
+    const newTaskId = "round_" + Date.now();
+    set(taskRef, t);
+    set(taskIdRef, newTaskId);
+    set(idealRef, null);
+    set(ref(db, "firstEntry_" + newTaskId), null);
+    set(ref(db, "rounds/" + newTaskId + "/task"), t); // save task text in round
+    setTimeout(updateRoundSelector, 1000); // refresh selector
   };
 
   window.clearAll = function() {
-    if (!confirm("clear everything?")) return;
-    remove(entriesRef); set(idealRef, null);
+    if (!confirm("clear all submissions for this task?")) return;
+    if (currentTaskId) remove(ref(db, "rounds/" + currentTaskId + "/entries"));
+    set(idealRef, null);
   };
 
   window.revealIdealPrompt = async function() {
@@ -1192,22 +1275,21 @@ Respond ONLY with valid JSON, no markdown, no extra text:
       const entryData = { name, prompt, score: result.total, clarity: result.clarity, output: result.output, feedback: result.feedback, techniques: result.techniques || null, deviceId, ts: Date.now() };
 
       // Check if this is the first submission for this task
-      const firstEntrySnap = await new Promise(res => { const fr = ref(db, "firstEntry"); onValue(fr, res, { onlyOnce: true }); });
+      const firstEntrySnap = await new Promise(res => { const fr = ref(db, "firstEntry_" + currentTaskId); onValue(fr, res, { onlyOnce: true }); });
       const isFirst = !firstEntrySnap.val();
       if (isFirst) {
         entryData.isFirst = true;
-        await set(ref(db, "firstEntry"), { name, deviceId, ts: Date.now() });
+        await set(ref(db, "firstEntry_" + currentTaskId), { name, deviceId, ts: Date.now() });
       }
 
       if (existingKey) {
-        // Keep isFirst flag if it was already set
         if (!isFirst) {
-          const prev = await new Promise(res => { const pr = ref(db, "entries/" + existingKey); onValue(pr, res, { onlyOnce: true }); });
+          const prev = await new Promise(res => { const pr = ref(db, "rounds/" + currentTaskId + "/entries/" + existingKey); onValue(pr, res, { onlyOnce: true }); });
           if (prev.val() && prev.val().isFirst) entryData.isFirst = true;
         }
-        await set(ref(db, "entries/" + existingKey), entryData);
+        await set(ref(db, "rounds/" + currentTaskId + "/entries/" + existingKey), entryData);
       } else {
-        const newRef = await push(entriesRef, entryData);
+        const newRef = await push(ref(db, "rounds/" + currentTaskId + "/entries"), entryData);
         setDeviceEntryKey(newRef.key);
       }
       localStorage.setItem("ps_last_prompt", prompt);
