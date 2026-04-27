@@ -285,6 +285,42 @@
       .practice-right { position: static; }
     }
 
+    /* ── INSIGHT SECTIONS ── */
+    .insight-section { max-width: 1180px; margin: 32px auto 0; }
+    .insight-title { font-family: var(--sans); font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .insight-sub { font-family: var(--mono); font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 18px; }
+
+    /* myth vs truth */
+    .myth-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+    .myth-card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; }
+    .myth-card.bad { border-left: 3px solid #f87171; }
+    .myth-card.good { border-left: 3px solid var(--accent); }
+    .myth-label { font-family: var(--mono); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 8px; }
+    .myth-label.bad { color: #f87171; }
+    .myth-label.good { color: var(--accent); }
+    .myth-text { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+    /* levels */
+    .levels-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+    .level-card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 12px; }
+    .level-num { font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+    .level-label { font-family: var(--sans); font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .level-prompt { font-family: var(--mono); font-size: 11px; color: var(--text2); line-height: 1.55; background: var(--surface2); padding: 8px; border-radius: 4px; margin-bottom: 6px; }
+    .level-why { font-size: 11px; color: var(--muted); line-height: 1.5; }
+    .level-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+
+    /* weights */
+    .weights-list { display: flex; flex-direction: column; gap: 8px; }
+    .weight-row { display: flex; align-items: center; gap: 14px; padding: 10px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; }
+    .weight-rank { font-family: var(--mono); font-size: 14px; font-weight: 700; min-width: 28px; }
+    .weight-name { font-size: 13px; font-weight: 700; color: var(--text); min-width: 140px; }
+    .weight-bar-wrap { flex: 1; height: 5px; background: var(--border); border-radius: 999px; overflow: hidden; }
+    .weight-bar { height: 100%; border-radius: 999px; background: var(--accent); }
+    .weight-note { font-family: var(--mono); font-size: 11px; color: var(--muted); text-align: right; min-width: 80px; }
+
+    @media (max-width: 860px) { .myth-grid { grid-template-columns: 1fr; } .levels-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 500px) { .levels-grid { grid-template-columns: 1fr; } }
+
     /* ── TRY IT SECTION ── */
     .tryit-section { max-width: 1180px; margin: 32px auto 0; }
     .tryit-header { margin-bottom: 20px; }
@@ -654,6 +690,115 @@
   </div>
 
   <!-- TRY IT YOURSELF -->
+  <!-- MYTH BUSTER -->
+  <div class="insight-section">
+    <div class="insight-title">💡 good English ≠ good prompts</div>
+    <div class="insight-sub">the most common misconception</div>
+    <div class="myth-grid">
+      <div class="myth-card bad">
+        <div class="myth-label bad">❌ what people assume</div>
+        <div class="myth-text">If I write clearly in English, I'll get good AI output. Prompting is just common sense.</div>
+      </div>
+      <div class="myth-card good">
+        <div class="myth-label good">✅ what actually works</div>
+        <div class="myth-text">Prompting is <strong>structured thinking</strong> — not language skill. It's task design: constraints, context, format, and iteration.</div>
+      </div>
+      <div class="myth-card bad">
+        <div class="myth-label bad">❌ good English, bad prompt</div>
+        <div class="myth-text" style="font-family:var(--mono);font-size:12px;">"Explain machine learning in detail."</div>
+      </div>
+      <div class="myth-card good">
+        <div class="myth-label good">✅ same intent, engineered prompt</div>
+        <div class="myth-text" style="font-family:var(--mono);font-size:12px;">"Explain supervised learning to a 14-year-old using a football analogy. 3 sentences max."</div>
+      </div>
+    </div>
+    <div style="font-family:var(--mono);font-size:12px;color:var(--muted);padding:10px 14px;background:var(--surface2);border-radius:4px;border-left:2px solid var(--accent);">
+      The second works better not because of English — but because of <strong style="color:var(--text);">constraints + audience + specificity.</strong> That's task design, not language skill.
+    </div>
+  </div>
+
+  <!-- 5 LEVELS -->
+  <div class="insight-section" style="margin-top:32px;">
+    <div class="insight-title">📶 the 5 levels of prompting</div>
+    <div class="insight-sub">same topic, completely different outputs</div>
+    <div class="levels-grid">
+      <div class="level-card" style="border-top:3px solid #f87171;">
+        <div class="level-num"><span class="level-dot" style="background:#f87171;"></span>LEVEL 1</div>
+        <div class="level-label">Beginner</div>
+        <div class="level-prompt">"Explain machine learning"</div>
+        <div class="level-why">No audience, no format, no constraints. Generic, long, not useful.</div>
+      </div>
+      <div class="level-card" style="border-top:3px solid #fb923c;">
+        <div class="level-num"><span class="level-dot" style="background:#fb923c;"></span>LEVEL 2</div>
+        <div class="level-label">Good English</div>
+        <div class="level-prompt">"Explain ML in simple terms"</div>
+        <div class="level-why">Better grammar, but "simple" is subjective. Still broad.</div>
+      </div>
+      <div class="level-card" style="border-top:3px solid #fbbf24;">
+        <div class="level-num"><span class="level-dot" style="background:#fbbf24;"></span>LEVEL 3</div>
+        <div class="level-label">Structured</div>
+        <div class="level-prompt">"Explain ML to a 14-year-old using a football analogy. 5 sentences."</div>
+        <div class="level-why">Audience + analogy + length. Output becomes targeted and consistent.</div>
+      </div>
+      <div class="level-card" style="border-top:3px solid var(--accent);">
+        <div class="level-num"><span class="level-dot" style="background:var(--accent);"></span>LEVEL 4</div>
+        <div class="level-label">Advanced</div>
+        <div class="level-prompt">"Compare supervised vs unsupervised. 3 bullets each: concept, football example, one-liner."</div>
+        <div class="level-why">Controlled structure + forced format. This is where it becomes engineering.</div>
+      </div>
+      <div class="level-card" style="border-top:3px solid #a78bfa;">
+        <div class="level-num"><span class="level-dot" style="background:#a78bfa;"></span>LEVEL 5</div>
+        <div class="level-label">Pro</div>
+        <div class="level-prompt">"You are an AI teacher. Explain to a 14-year-old... First: 3-sentence intro. Then: 2 bullets comparing. Then: 1 real-world example. No jargon."</div>
+        <div class="level-why">Role + multi-stage output + tone + constraints. Maximum control.</div>
+      </div>
+    </div>
+    <div style="font-family:var(--mono);font-size:12px;color:var(--muted);padding:10px 14px;background:var(--surface2);border-radius:4px;border-left:2px solid var(--accent);margin-top:12px;">
+      What changed across levels? <strong style="color:var(--text);">Not English.</strong> It's clarity of intent + control over output + thinking like a system designer.
+    </div>
+  </div>
+
+  <!-- COMPONENT WEIGHTS -->
+  <div class="insight-section" style="margin-top:32px;">
+    <div class="insight-title">⚖️ what matters most in a prompt</div>
+    <div class="insight-sub">no fixed formula — but practical impact order</div>
+    <div class="weights-list">
+      <div class="weight-row" style="border-left:3px solid var(--accent);">
+        <div class="weight-rank">🥇</div>
+        <div class="weight-name">Task Clarity</div>
+        <div class="weight-bar-wrap"><div class="weight-bar" style="width:95%;"></div></div>
+        <div class="weight-note">~40% impact</div>
+      </div>
+      <div class="weight-row" style="border-left:3px solid var(--accent);">
+        <div class="weight-rank">🥈</div>
+        <div class="weight-name">Constraints</div>
+        <div class="weight-bar-wrap"><div class="weight-bar" style="width:80%;"></div></div>
+        <div class="weight-note">~35% impact</div>
+      </div>
+      <div class="weight-row">
+        <div class="weight-rank">🥉</div>
+        <div class="weight-name">Context</div>
+        <div class="weight-bar-wrap"><div class="weight-bar" style="width:55%;opacity:.7;"></div></div>
+        <div class="weight-note">situational</div>
+      </div>
+      <div class="weight-row">
+        <div class="weight-rank">#4</div>
+        <div class="weight-name">Output Format</div>
+        <div class="weight-bar-wrap"><div class="weight-bar" style="width:50%;opacity:.6;"></div></div>
+        <div class="weight-note">usability</div>
+      </div>
+      <div class="weight-row">
+        <div class="weight-rank">#5</div>
+        <div class="weight-name">Role Prompting</div>
+        <div class="weight-bar-wrap"><div class="weight-bar" style="width:30%;opacity:.5;"></div></div>
+        <div class="weight-note">optional boost</div>
+      </div>
+    </div>
+    <div style="font-family:var(--mono);font-size:12px;color:var(--muted);padding:10px 14px;background:var(--surface2);border-radius:4px;border-left:2px solid var(--accent);margin-top:12px;">
+      Task clarity + constraints = <strong style="color:var(--text);">~75% of the impact.</strong> Everything else refines, polishes, and improves usability.
+    </div>
+  </div>
+
   <div class="tryit-section">
     <div class="tryit-header">
       <div class="tryit-title">🧪 try it yourself</div>
