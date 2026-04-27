@@ -1139,15 +1139,8 @@
     entriesListener = onValue(entriesRef, snap => {
       if (viewingRoundId) return; // host viewing a past round — don't override display
       const data = snap.val() || {};
-      // Deduplicate by deviceId — keep best score per device across all submissions
-      const best = {};
-      Object.values(data).forEach(e => {
-        if (!e.deviceId) return;
-        if (!best[e.deviceId] || parseFloat(e.score) > parseFloat(best[e.deviceId].score)) {
-          best[e.deviceId] = e;
-        }
-      });
-      const entries = Object.values(best);
+      // One entry per device — keep latest submission (resubmit replaces via set() on fixed key)
+      const entries = Object.values(data).filter(e => e.name && e.score !== undefined);
       entries.sort((a,b) => { const diff = parseFloat(b.score) - parseFloat(a.score); if (Math.abs(diff) > 0.001) return diff; return (a.ts || 0) - (b.ts || 0); });
       const sc = document.getElementById("subCount"); if (sc) sc.textContent = entries.length + " participant" + (entries.length !== 1 ? "s" : "");
       renderLeaderboard(entries);
@@ -1429,7 +1422,8 @@ Respond ONLY with valid JSON, no markdown, no extra text:
     const lb = document.getElementById("participantLeaderboard");
     if (!lb) return;
     if (!entries.length) { lb.innerHTML = '<div class="lb-empty">waiting for the goats…</div>'; return; }
-    lb.innerHTML = entries.map((e,i) => {
+    const top10p = entries.slice(0, 10);
+    lb.innerHTML = top10p.map((e,i) => {
       const rank = getTiedRank(entries, i);
       const medal = getRankDisplay(rank);
       const cls = getRankClass(rank);
@@ -1448,7 +1442,8 @@ Respond ONLY with valid JSON, no markdown, no extra text:
     window._allEntries = entries;
     const lb = document.getElementById("leaderboard");
     if (!entries.length) { lb.innerHTML = '<div class="lb-empty">waiting for the goats…</div>'; return; }
-    lb.innerHTML = entries.map((e,i) => {
+    const top10 = entries.slice(0, 10);
+    lb.innerHTML = top10.map((e,i) => {
       const rank = getTiedRank(entries, i);
       const medal = getRankDisplay(rank);
       const cls = getRankClass(rank);
@@ -1460,7 +1455,7 @@ Respond ONLY with valid JSON, no markdown, no extra text:
         <div class="lb-bar-wrap"><div class="lb-bar" style="width:${Math.round(e.score)}%"></div></div>
         <span class="lb-score">${(e.score % 1 === 0 ? Math.round(e.score) : e.score.toFixed(1))}</span>
       </div>`;
-    }).join("");
+    }).join("") + (entries.length > 10 ? `<div style="font-family:var(--mono);font-size:11px;color:var(--muted);text-align:center;margin-top:8px;">top 10 of ${entries.length} participants</div>` : "");
   }
 
   function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
@@ -1585,17 +1580,29 @@ Respond ONLY with valid JSON, no markdown, no extra text:
   window._buildTechniqueBadges = buildTechniqueBadges;
 
   /* ── PRACTICE TAB (needs esc + buildTechniqueBadges from module) ── */
-  // practiceScores: persisted to localStorage per task
-  function loadPracticeScores() {
-    try { return JSON.parse(localStorage.getItem("ps_practice_scores") || "{}"); } catch(e) { return {}; }
-  }
-  function savePracticeScores() {
-    try { localStorage.setItem("ps_practice_scores", JSON.stringify(practiceScores)); } catch(e) {}
-  }
-  let practiceScores = loadPracticeScores();
+  // practiceScores: stored in Firebase under practice/<taskKey>/entries
+  let practiceScores = {}; // local cache
   let currentPracticeTask = "";
+  let practiceListener = null;
 
-  // On page load — restore last selected task so leaderboard is visible immediately
+  function getPracticeTaskKey(task) {
+    return "pt_" + btoa(encodeURIComponent(task.trim().toLowerCase().slice(0,60))).replace(/[^a-zA-Z0-9]/g,"").slice(0,30);
+  }
+
+  function attachPracticeListener(task) {
+    if (practiceListener) practiceListener();
+    if (!task) return;
+    const key = getPracticeTaskKey(task);
+    practiceListener = onValue(ref(db, "practice/" + key + "/entries"), snap => {
+      const data = snap.val() || {};
+      practiceScores[task] = Object.values(data);
+      renderPracticeLeaderboard();
+    });
+  }
+
+  function savePracticeScores() {} // no-op — Firebase handles persistence
+
+  // On page load — restore last selected task
   window.addEventListener("DOMContentLoaded", () => {
     const lastTask = localStorage.getItem("ps_last_practice_task");
     const sel = document.getElementById("practiceTaskSelect");
@@ -1604,7 +1611,7 @@ Respond ONLY with valid JSON, no markdown, no extra text:
       currentPracticeTask = lastTask;
       const taskBox = document.getElementById("practiceTaskBox");
       if (taskBox) taskBox.textContent = lastTask;
-      renderPracticeLeaderboard();
+      attachPracticeListener(lastTask);
     }
   });
 
@@ -1620,7 +1627,7 @@ Respond ONLY with valid JSON, no markdown, no extra text:
     document.getElementById("practiceBtn").textContent = "score my prompt →";
     document.getElementById("practiceBtn").onclick = window.submitPracticePrompt;
     if (window.clearFile) clearFile();
-    renderPracticeLeaderboard();
+    attachPracticeListener(val); // subscribe to Firebase for this task
   };
 
   window._practiceFile = null; // stores { type, data, name }
@@ -1760,10 +1767,18 @@ Respond ONLY with valid JSON, no markdown, no extra text:
 
       const nameInput = document.getElementById("practiceNameInput");
       const entryName = nameInput ? nameInput.value.trim() || "You" : "You";
-      if (!practiceScores[task]) practiceScores[task] = [];
-      practiceScores[task].unshift({ name: entryName, score: result.total, clarity: result.clarity, output: result.output, feedback: result.feedback, techniques: result.techniques, ts: Date.now() });
-      savePracticeScores();
-      renderPracticeLeaderboard();
+      // Save to Firebase under practice/<taskKey>/entries
+      const pKey = getPracticeTaskKey(task);
+      await push(ref(db, "practice/" + pKey + "/entries"), {
+        name: entryName,
+        score: result.total,
+        clarity: result.clarity,
+        output: result.output,
+        feedback: result.feedback,
+        techniques: result.techniques || null,
+        ts: Date.now()
+      });
+      // renderPracticeLeaderboard is called automatically by the Firebase listener
 
       const vibe = result.total >= 85 ? "absolute cooking 🔥" : result.total >= 70 ? "not bad, chef 👨‍🍳" : result.total >= 50 ? "mid but we see u 👀" : "we will try again 💀";
       const techHtml = buildTechniqueBadges(result.techniques || {});
@@ -1801,9 +1816,9 @@ Respond ONLY with valid JSON, no markdown, no extra text:
     if (sessionStorage.getItem("isHost") !== "yes") return;
     if (!currentPracticeTask) return;
     if (!confirm("Clear the leaderboard for this task?")) return;
-    delete practiceScores[currentPracticeTask];
-    savePracticeScores();
-    renderPracticeLeaderboard();
+    const pKey = getPracticeTaskKey(currentPracticeTask);
+    remove(ref(db, "practice/" + pKey + "/entries"));
+    // Firebase listener will auto-update the UI
   };
 
   function renderPracticeLeaderboard() {
@@ -1811,7 +1826,7 @@ Respond ONLY with valid JSON, no markdown, no extra text:
     const lbTitle = document.getElementById("practiceLbTitle");
     if (!lb) return;
     const task = currentPracticeTask;
-    const allEntries = task && practiceScores[task] ? [...practiceScores[task]] : [];
+    const allEntries = task && practiceScores[task] ? [...practiceScores[task]] : []; // populated by Firebase listener
     allEntries.sort((a,b) => { const diff = parseFloat(b.score) - parseFloat(a.score); if (Math.abs(diff) > 0.001) return diff; return (a.ts||0)-(b.ts||0); });
     const entries = allEntries.slice(0, 10); // top 10 only
 
