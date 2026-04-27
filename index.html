@@ -703,8 +703,8 @@
 
   </div><!-- end learn-slide -->
 
-  <div class="learn-slide">
   <!-- MYTH BUSTER -->
+  <div class="learn-slide">
   <div class="insight-section">
     <div class="slide-eyebrow">the big misconception</div>
     <div class="insight-title">good English ≠ good prompts</div>
@@ -721,23 +721,21 @@
       </div>
       <div class="myth-card bad">
         <div class="myth-label bad">❌ good English, bad prompt</div>
-        <div class="myth-text" style="font-family:var(--mono);font-size:12px;">"Explain machine learning in detail."</div>
+        <div class="myth-text" style="font-family:var(--mono);font-size:14px;">"Explain machine learning in detail."</div>
       </div>
       <div class="myth-card good">
         <div class="myth-label good">✅ same intent, engineered prompt</div>
-        <div class="myth-text" style="font-family:var(--mono);font-size:12px;">"Explain supervised learning to a 14-year-old using a football analogy. 3 sentences max."</div>
+        <div class="myth-text" style="font-family:var(--mono);font-size:14px;">"Explain supervised learning to a 14-year-old using a football analogy. 3 sentences max."</div>
       </div>
     </div>
-    <div style="font-family:var(--mono);font-size:12px;color:var(--muted);padding:10px 14px;background:var(--surface2);border-radius:4px;border-left:2px solid var(--accent);">
+    <div style="font-family:var(--mono);font-size:15px;color:var(--muted);padding:14px 16px;background:var(--surface2);border-radius:4px;border-left:2px solid var(--accent);">
       The second works better not because of English — but because of <strong style="color:var(--text);">constraints + audience + specificity.</strong> That's task design, not language skill.
     </div>
   </div>
-
-  </div>
   </div><!-- end learn-slide -->
 
+  <!-- 5 LEVELS — SKILL PROGRESSION -->
   <div class="learn-slide">
-  <!-- 5 LEVELS -->
   <div class="insight-section">
     <div class="slide-eyebrow">skill progression</div>
     <div class="insight-title">the 5 levels of prompting</div>
@@ -775,16 +773,14 @@
         <div class="level-why">Role + multi-stage output + tone + constraints. Maximum control.</div>
       </div>
     </div>
-    <div style="font-family:var(--mono);font-size:12px;color:var(--muted);padding:10px 14px;background:var(--surface2);border-radius:4px;border-left:2px solid var(--accent);margin-top:16px;font-size:15px;">
+    <div style="font-family:var(--mono);font-size:15px;color:var(--muted);padding:14px 16px;background:var(--surface2);border-radius:4px;border-left:2px solid var(--accent);margin-top:16px;">
       What changed across levels? <strong style="color:var(--text);">Not English.</strong> It's clarity of intent + control over output + thinking like a system designer.
     </div>
   </div>
-
-  </div>
   </div><!-- end learn-slide -->
 
+  <!-- COMPONENT WEIGHTS — PRIORITY GUIDE -->
   <div class="learn-slide">
-  <!-- COMPONENT WEIGHTS -->
   <div class="insight-section">
     <div class="slide-eyebrow">priority guide</div>
     <div class="insight-title">what matters most in a prompt</div>
@@ -822,31 +818,24 @@
         <div class="weight-note">optional boost</div>
       </div>
     </div>
-    <div style="font-family:var(--mono);font-size:12px;color:var(--muted);padding:10px 14px;background:var(--surface2);border-radius:4px;border-left:2px solid var(--accent);margin-top:16px;font-size:15px;">
+    <div style="font-family:var(--mono);font-size:15px;color:var(--muted);padding:14px 16px;background:var(--surface2);border-radius:4px;border-left:2px solid var(--accent);margin-top:16px;">
       Task clarity + constraints = <strong style="color:var(--text);">~75% of the impact.</strong> Everything else refines, polishes, and improves usability.
     </div>
   </div>
-
-  </div>
   </div><!-- end learn-slide -->
 
+  <!-- TRY IT YOURSELF — HANDS-ON PRACTICE -->
   <div class="learn-slide">
   <div class="tryit-section">
     <div class="tryit-header">
       <div class="slide-eyebrow">hands-on practice</div>
-      <div class="tryit-title" style="font-family:var(--sans);font-size:clamp(26px,4vw,38px);font-weight:800;letter-spacing:-0.5px;">try it yourself</div>
+      <div class="tryit-title" style="font-family:var(--sans);font-size:clamp(32px,5vw,52px);font-weight:800;letter-spacing:-1px;">try it yourself</div>
       <div class="slide-divider"></div>
-      <div class="tryit-sub">copy these into chatgpt · run both prompts · see the difference for yourself</div>
+      <div class="tryit-sub" style="font-size:15px;">copy these into chatgpt · run both prompts · see the difference for yourself</div>
     </div>
-
     <div class="tryit-grid">
-
-      <!-- 1. Email -->
       <div class="tryit-card">
-        <div class="tryit-card-header">
-          <div class="tryit-task">Task: Write a leave request email to your manager</div>
-          <div class="tryit-tag tryit-tag-topic">Writing</div>
-        </div>
+        <div class="tryit-card-header"><div class="tryit-task">Task: Write a leave request email to your manager</div><div class="tryit-tag tryit-tag-topic">Writing</div></div>
         <div class="tryit-prompts">
           <div class="tryit-col tryit-col-bad">
             <div class="tryit-col-label bad">❌ weak prompt</div>
@@ -857,22 +846,14 @@
           <div class="tryit-col">
             <div class="tryit-col-label good">✅ strong prompt</div>
             <div class="tryit-prompt-text">You are a professional employee writing to your direct manager. Write a polite, concise email requesting 3 days of leave next week for a family function. Tone: formal but warm. Keep it under 80 words. Include: reason, dates, and a line offering to hand over pending tasks.</div>
-            <div class="tryit-why good">Role + instruction + context + output format + constraints. Every detail guided.</div>
+            <div class="tryit-why good">Role + instruction + context + output format + constraints.</div>
             <button class="copy-prompt-btn" onclick="copyPrompt(this, 'You are a professional employee writing to your direct manager. Write a polite, concise email requesting 3 days of leave next week for a family function. Tone: formal but warm. Keep it under 80 words. Include: reason, dates, and a line offering to hand over pending tasks.')">copy</button>
           </div>
         </div>
-        <div class="tryit-chatgpt-bar">
-          <div class="tryit-chatgpt-hint">paste both prompts and compare the outputs</div>
-          <a class="tryit-open-btn" href="https://chatgpt.com" target="_blank">open chatgpt ↗</a>
-        </div>
+        <div class="tryit-chatgpt-bar"><div class="tryit-chatgpt-hint">paste both prompts and compare</div><a class="tryit-open-btn" href="https://chatgpt.com" target="_blank">open chatgpt ↗</a></div>
       </div>
-
-      <!-- 2. Explain concept -->
       <div class="tryit-card">
-        <div class="tryit-card-header">
-          <div class="tryit-task">Task: Explain how AI works to a non-technical person</div>
-          <div class="tryit-tag tryit-tag-topic">Explaining</div>
-        </div>
+        <div class="tryit-card-header"><div class="tryit-task">Task: Explain how AI works to a non-technical person</div><div class="tryit-tag tryit-tag-topic">Explaining</div></div>
         <div class="tryit-prompts">
           <div class="tryit-col tryit-col-bad">
             <div class="tryit-col-label bad">❌ weak prompt</div>
@@ -882,124 +863,89 @@
           </div>
           <div class="tryit-col">
             <div class="tryit-col-label good">✅ strong prompt</div>
-            <div class="tryit-prompt-text">Explain how AI works to a 45-year-old small business owner who has never studied technology. Use a simple analogy — compare it to something from everyday life. Keep it under 150 words. Avoid all technical jargon. End with one practical example of how they could use AI in their business today.</div>
-            <div class="tryit-why good">Audience framing + analogy instruction + word limit + jargon constraint + concrete output.</div>
-            <button class="copy-prompt-btn" onclick="copyPrompt(this, 'Explain how AI works to a 45-year-old small business owner who has never studied technology. Use a simple analogy — compare it to something from everyday life. Keep it under 150 words. Avoid all technical jargon. End with one practical example of how they could use AI in their business today.')">copy</button>
+            <div class="tryit-prompt-text">Explain how AI works to a 45-year-old small business owner who has never studied technology. Use a simple analogy from everyday life. Keep it under 150 words. Avoid all technical jargon. End with one practical example of how they could use AI in their business today.</div>
+            <div class="tryit-why good">Audience framing + analogy + word limit + jargon constraint + concrete output.</div>
+            <button class="copy-prompt-btn" onclick="copyPrompt(this, 'Explain how AI works to a 45-year-old small business owner who has never studied technology. Use a simple analogy from everyday life. Keep it under 150 words. Avoid all technical jargon. End with one practical example of how they could use AI in their business today.')">copy</button>
           </div>
         </div>
-        <div class="tryit-chatgpt-bar">
-          <div class="tryit-chatgpt-hint">notice how much clearer the second response is</div>
-          <a class="tryit-open-btn" href="https://chatgpt.com" target="_blank">open chatgpt ↗</a>
-        </div>
+        <div class="tryit-chatgpt-bar"><div class="tryit-chatgpt-hint">notice how much clearer the second response is</div><a class="tryit-open-btn" href="https://chatgpt.com" target="_blank">open chatgpt ↗</a></div>
       </div>
-
-      <!-- 3. Marketing content -->
       <div class="tryit-card">
-        <div class="tryit-card-header">
-          <div class="tryit-task">Task: Write an Instagram caption for a product</div>
-          <div class="tryit-tag tryit-tag-topic">Marketing</div>
-        </div>
+        <div class="tryit-card-header"><div class="tryit-task">Task: Write an Instagram caption for a product</div><div class="tryit-tag tryit-tag-topic">Marketing</div></div>
         <div class="tryit-prompts">
           <div class="tryit-col tryit-col-bad">
             <div class="tryit-col-label bad">❌ weak prompt</div>
             <div class="tryit-prompt-text">Write an Instagram caption for my coffee shop.</div>
-            <div class="tryit-why bad">No tone, no product, no audience, no CTA. AI invents everything — rarely matches your brand.</div>
+            <div class="tryit-why bad">No tone, no product, no audience, no CTA. AI invents everything.</div>
             <button class="copy-prompt-btn" onclick="copyPrompt(this, 'Write an Instagram caption for my coffee shop.')">copy</button>
           </div>
           <div class="tryit-col">
             <div class="tryit-col-label good">✅ strong prompt</div>
-            <div class="tryit-prompt-text">Write an Instagram caption for a cozy, independent coffee shop in Kochi targeting working professionals aged 25–35. We just launched a new cold brew. Tone: warm, a little witty, not corporate. Max 3 lines. End with a question to drive comments. Include 3–5 relevant hashtags.</div>
-            <div class="tryit-why good">Target audience + product + tone + format + CTA + hashtags. Nothing left to guesswork.</div>
-            <button class="copy-prompt-btn" onclick="copyPrompt(this, 'Write an Instagram caption for a cozy, independent coffee shop in Kochi targeting working professionals aged 25–35. We just launched a new cold brew. Tone: warm, a little witty, not corporate. Max 3 lines. End with a question to drive comments. Include 3–5 relevant hashtags.')">copy</button>
+            <div class="tryit-prompt-text">Write an Instagram caption for a cozy coffee shop in Kochi targeting working professionals aged 25–35. We just launched a new cold brew. Tone: warm, a little witty, not corporate. Max 3 lines. End with a question to drive comments. Include 3–5 relevant hashtags.</div>
+            <div class="tryit-why good">Audience + product + tone + format + CTA + hashtags. Nothing left to guesswork.</div>
+            <button class="copy-prompt-btn" onclick="copyPrompt(this, 'Write an Instagram caption for a cozy coffee shop in Kochi targeting working professionals aged 25–35. We just launched a new cold brew. Tone: warm, a little witty, not corporate. Max 3 lines. End with a question to drive comments. Include 3–5 relevant hashtags.')">copy</button>
           </div>
         </div>
-        <div class="tryit-chatgpt-bar">
-          <div class="tryit-chatgpt-hint">see how specificity transforms the output quality</div>
-          <a class="tryit-open-btn" href="https://chatgpt.com" target="_blank">open chatgpt ↗</a>
-        </div>
+        <div class="tryit-chatgpt-bar"><div class="tryit-chatgpt-hint">see how specificity transforms output quality</div><a class="tryit-open-btn" href="https://chatgpt.com" target="_blank">open chatgpt ↗</a></div>
       </div>
-
-      <!-- 4. Analysis -->
       <div class="tryit-card">
-        <div class="tryit-card-header">
-          <div class="tryit-task">Task: Get feedback on a business idea</div>
-          <div class="tryit-tag tryit-tag-topic">Analysis</div>
-        </div>
+        <div class="tryit-card-header"><div class="tryit-task">Task: Get feedback on a business idea</div><div class="tryit-tag tryit-tag-topic">Analysis</div></div>
         <div class="tryit-prompts">
           <div class="tryit-col tryit-col-bad">
             <div class="tryit-col-label bad">❌ weak prompt</div>
             <div class="tryit-prompt-text">Is my business idea good? I want to sell handmade soaps.</div>
-            <div class="tryit-why bad">No structure requested, no depth, yes/no framing. AI gives vague encouragement.</div>
+            <div class="tryit-why bad">No structure, yes/no framing. AI gives vague encouragement.</div>
             <button class="copy-prompt-btn" onclick="copyPrompt(this, 'Is my business idea good? I want to sell handmade soaps.')">copy</button>
           </div>
           <div class="tryit-col">
             <div class="tryit-col-label good">✅ strong prompt</div>
-            <div class="tryit-prompt-text">Act as a startup mentor. Critically evaluate this business idea: selling premium handmade soaps online in India, targeting urban women aged 22–40. Think step by step. Cover: market opportunity, key risks, 3 things I must validate before starting, and one insight I probably haven't considered. Be honest, not encouraging.</div>
-            <div class="tryit-why good">Role + chain-of-thought + structured output + honest constraint. Forces real analysis.</div>
-            <button class="copy-prompt-btn" onclick="copyPrompt(this, 'Act as a startup mentor. Critically evaluate this business idea: selling premium handmade soaps online in India, targeting urban women aged 22–40. Think step by step. Cover: market opportunity, key risks, 3 things I must validate before starting, and one insight I probably haven't considered. Be honest, not encouraging.')">copy</button>
+            <div class="tryit-prompt-text">Act as a startup mentor. Critically evaluate: selling premium handmade soaps online in India, targeting urban women aged 22–40. Think step by step. Cover: market opportunity, key risks, 3 things to validate, and one insight I probably haven't considered. Be honest, not encouraging.</div>
+            <div class="tryit-why good">Role + chain-of-thought + structured output + honest constraint.</div>
+            <button class="copy-prompt-btn" onclick="copyPrompt(this, 'Act as a startup mentor. Critically evaluate: selling premium handmade soaps online in India, targeting urban women aged 22–40. Think step by step. Cover: market opportunity, key risks, 3 things to validate, and one insight I probably haven't considered. Be honest, not encouraging.')">copy</button>
           </div>
         </div>
-        <div class="tryit-chatgpt-bar">
-          <div class="tryit-chatgpt-hint">chain-of-thought + role = dramatically deeper analysis</div>
-          <a class="tryit-open-btn" href="https://chatgpt.com" target="_blank">open chatgpt ↗</a>
-        </div>
+        <div class="tryit-chatgpt-bar"><div class="tryit-chatgpt-hint">chain-of-thought + role = dramatically deeper analysis</div><a class="tryit-open-btn" href="https://chatgpt.com" target="_blank">open chatgpt ↗</a></div>
       </div>
-
-      <!-- 5. UX/Design -->
       <div class="tryit-card">
-        <div class="tryit-card-header">
-          <div class="tryit-task">Task: Get UI copy for a signup button</div>
-          <div class="tryit-tag tryit-tag-topic">UX Writing</div>
-        </div>
+        <div class="tryit-card-header"><div class="tryit-task">Task: Get UI copy for a signup button</div><div class="tryit-tag tryit-tag-topic">UX Writing</div></div>
         <div class="tryit-prompts">
           <div class="tryit-col tryit-col-bad">
             <div class="tryit-col-label bad">❌ weak prompt</div>
             <div class="tryit-prompt-text">Give me text for a signup button.</div>
-            <div class="tryit-why bad">No product context, no tone, no constraints. You will get "Sign Up" — you already knew that.</div>
+            <div class="tryit-why bad">No product, no tone, no constraints. You will get "Sign Up" — you already knew that.</div>
             <button class="copy-prompt-btn" onclick="copyPrompt(this, 'Give me text for a signup button.')">copy</button>
           </div>
           <div class="tryit-col">
             <div class="tryit-col-label good">✅ strong prompt</div>
-            <div class="tryit-prompt-text">You are a UX writer for a productivity app targeting busy freelancers. Write 5 variations of a primary CTA button label for the signup page. The tone should be action-oriented and friendly — not pushy. Each option must be under 4 words. Avoid generic phrases like "Sign Up" or "Get Started". Format: numbered list.</div>
-            <div class="tryit-why good">Role + 5 variations + tone + word constraint + exclusions + output format. Instantly usable.</div>
-            <button class="copy-prompt-btn" onclick="copyPrompt(this, 'You are a UX writer for a productivity app targeting busy freelancers. Write 5 variations of a primary CTA button label for the signup page. The tone should be action-oriented and friendly — not pushy. Each option must be under 4 words. Avoid generic phrases like "Sign Up" or "Get Started". Format: numbered list.')">copy</button>
+            <div class="tryit-prompt-text">You are a UX writer for a productivity app for busy freelancers. Write 5 CTA button label variations for the signup page. Tone: action-oriented and friendly, not pushy. Under 4 words each. Avoid "Sign Up" or "Get Started". Format: numbered list.</div>
+            <div class="tryit-why good">Role + variations + tone + word limit + exclusions + format.</div>
+            <button class="copy-prompt-btn" onclick="copyPrompt(this, 'You are a UX writer for a productivity app for busy freelancers. Write 5 CTA button label variations for the signup page. Tone: action-oriented and friendly, not pushy. Under 4 words each. Avoid "Sign Up" or "Get Started". Format: numbered list.')">copy</button>
           </div>
         </div>
-        <div class="tryit-chatgpt-bar">
-          <div class="tryit-chatgpt-hint">constraints + exclusions = creative, usable options</div>
-          <a class="tryit-open-btn" href="https://chatgpt.com" target="_blank">open chatgpt ↗</a>
-        </div>
+        <div class="tryit-chatgpt-bar"><div class="tryit-chatgpt-hint">constraints + exclusions = creative, usable options</div><a class="tryit-open-btn" href="https://chatgpt.com" target="_blank">open chatgpt ↗</a></div>
       </div>
-
-      <!-- 6. Creative -->
       <div class="tryit-card">
-        <div class="tryit-card-header">
-          <div class="tryit-task">Task: Write a short story opening</div>
-          <div class="tryit-tag tryit-tag-topic">Creative</div>
-        </div>
+        <div class="tryit-card-header"><div class="tryit-task">Task: Write a short story opening</div><div class="tryit-tag tryit-tag-topic">Creative</div></div>
         <div class="tryit-prompts">
           <div class="tryit-col tryit-col-bad">
             <div class="tryit-col-label bad">❌ weak prompt</div>
             <div class="tryit-prompt-text">Write a story about a detective.</div>
-            <div class="tryit-why bad">Genre, setting, tone, length, style — all undefined. Result will be clichéd and forgettable.</div>
+            <div class="tryit-why bad">Genre, setting, tone, length, style — all undefined. Result will be clichéd.</div>
             <button class="copy-prompt-btn" onclick="copyPrompt(this, 'Write a story about a detective.')">copy</button>
           </div>
           <div class="tryit-col">
             <div class="tryit-col-label good">✅ strong prompt</div>
-            <div class="tryit-prompt-text">Write the opening paragraph (max 120 words) of a noir detective story set in 1940s Mumbai during monsoon season. The detective is a tired, middle-aged woman who has seen too much. Start in the middle of a scene — she is standing outside a closed door. Use sensory detail. Avoid clichés like "It was a dark and stormy night."</div>
-            <div class="tryit-why good">Setting + character + constraints + scene direction + sensory instruction + specific exclusion.</div>
-            <button class="copy-prompt-btn" onclick="copyPrompt(this, 'Write the opening paragraph (max 120 words) of a noir detective story set in 1940s Mumbai during monsoon season. The detective is a tired, middle-aged woman who has seen too much. Start in the middle of a scene — she is standing outside a closed door. Use sensory detail. Avoid clichés like "It was a dark and stormy night."')">copy</button>
+            <div class="tryit-prompt-text">Write the opening paragraph (max 120 words) of a noir detective story set in 1940s Mumbai during monsoon season. The detective is a tired, middle-aged woman. Start mid-scene — she is outside a closed door. Use sensory detail. Avoid "It was a dark and stormy night."</div>
+            <div class="tryit-why good">Setting + character + constraints + scene direction + exclusion.</div>
+            <button class="copy-prompt-btn" onclick="copyPrompt(this, 'Write the opening paragraph (max 120 words) of a noir detective story set in 1940s Mumbai during monsoon season. The detective is a tired, middle-aged woman. Start mid-scene — she is outside a closed door. Use sensory detail. Avoid "It was a dark and stormy night."')">copy</button>
           </div>
         </div>
-        <div class="tryit-chatgpt-bar">
-          <div class="tryit-chatgpt-hint">specificity turns generic AI writing into something memorable</div>
-          <a class="tryit-open-btn" href="https://chatgpt.com" target="_blank">open chatgpt ↗</a>
-        </div>
+        <div class="tryit-chatgpt-bar"><div class="tryit-chatgpt-hint">specificity turns generic AI writing into something memorable</div><a class="tryit-open-btn" href="https://chatgpt.com" target="_blank">open chatgpt ↗</a></div>
       </div>
-
     </div>
   </div>
   </div><!-- end learn-slide -->
+
 
 </div>
 
@@ -1011,7 +957,7 @@
       <div class="p-hero" style="text-align:left;margin-bottom:20px;">
         <div class="p-hero-kicker">✍️ self practice</div>
         <div class="p-hero-title" style="font-size:clamp(28px,5vw,42px);">test yourself</div>
-        <div class="p-hero-sub">pick a task · write a prompt · get scored · track your best</div>
+        <div class="p-hero-sub">pick a task · write a prompt · get scored instantly</div>
       </div>
 
       <div class="p-label">choose a task</div>
@@ -1033,12 +979,13 @@
       <div class="p-task-box" id="practiceTaskBox" style="font-size:16px;min-height:52px;">select a task above to begin…</div>
 
       <div class="p-label" style="margin-top:16px;">your name</div>
-      <input class="p-input" id="practiceNameInput" type="text" placeholder="your name or handle" maxlength="30" style="margin-bottom:12px;" />
+      <input class="p-input" id="practiceNameInput" type="text" placeholder="your name or handle" maxlength="30" style="margin-bottom:14px;" />
+
       <div class="p-label">your prompt <span class="num">type it manually ✎</span></div>
       <textarea class="p-input" id="practicePrompt" placeholder="write your prompt here…" style="min-height:140px;"></textarea>
 
       <div style="margin-top:10px;">
-        <div class="p-label">attach a file <span class="num">optional — pdf, image, txt, docx</span></div>
+        <div class="p-label">attach a file <span class="num">optional — pdf, image, txt</span></div>
         <div class="file-drop-zone" id="fileDropZone" onclick="document.getElementById('practiceFile').click()" ondragover="handleDragOver(event)" ondrop="handleFileDrop(event)">
           <input type="file" id="practiceFile" accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.txt,.md" style="display:none;" onchange="handleFileSelect(event)" />
           <div class="file-drop-icon">📎</div>
@@ -1057,7 +1004,7 @@
       <div class="panel-label">task leaderboard 📊</div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px;">
         <div id="practiceLbTitle" style="font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;flex:1;">pick a task to begin</div>
-        <button id="resetTaskLbBtn" onclick="resetTaskLeaderboard()" style="display:none;padding:4px 10px;border-radius:8px;border:1px solid rgba(248,113,113,.3);background:transparent;color:#fca5a5;font-family:var(--mono);font-size:10px;cursor:pointer;">reset</button>
+        <button id="resetTaskLbBtn" onclick="resetTaskLeaderboard()" style="display:none;padding:4px 10px;border-radius:4px;border:1px solid rgba(248,113,113,.3);background:transparent;color:#fca5a5;font-family:var(--mono);font-size:10px;cursor:pointer;">reset</button>
       </div>
       <div id="practiceLb" style="display:flex;flex-direction:column;gap:6px;">
         <div class="lb-empty">pick a task above to begin</div>
@@ -1202,7 +1149,7 @@
       });
       const entries = Object.values(best);
       entries.sort((a,b) => { const diff = parseFloat(b.score) - parseFloat(a.score); if (Math.abs(diff) > 0.001) return diff; return (a.ts || 0) - (b.ts || 0); });
-      document.getElementById("subCount").textContent = entries.length + " participant" + (entries.length !== 1 ? "s" : "");
+      const sc = document.getElementById("subCount"); if (sc) sc.textContent = entries.length + " participant" + (entries.length !== 1 ? "s" : "");
       renderLeaderboard(entries);
       renderParticipantLeaderboard(entries);
     });
@@ -1638,8 +1585,14 @@ Respond ONLY with valid JSON, no markdown, no extra text:
   window._buildTechniqueBadges = buildTechniqueBadges;
 
   /* ── PRACTICE TAB (needs esc + buildTechniqueBadges from module) ── */
-  // practiceScores: { [taskKey]: [ {name, score, ts}, ... ] }
-  let practiceScores = {};
+  // practiceScores: persisted to localStorage per task
+  function loadPracticeScores() {
+    try { return JSON.parse(localStorage.getItem("ps_practice_scores") || "{}"); } catch(e) { return {}; }
+  }
+  function savePracticeScores() {
+    try { localStorage.setItem("ps_practice_scores", JSON.stringify(practiceScores)); } catch(e) {}
+  }
+  let practiceScores = loadPracticeScores();
   let currentPracticeTask = "";
 
   window.loadPracticeTask = function() {
@@ -1795,6 +1748,7 @@ Respond ONLY with valid JSON, no markdown, no extra text:
       const entryName = nameInput ? nameInput.value.trim() || "You" : "You";
       if (!practiceScores[task]) practiceScores[task] = [];
       practiceScores[task].unshift({ name: entryName, score: result.total, clarity: result.clarity, output: result.output, feedback: result.feedback, techniques: result.techniques, ts: Date.now() });
+      savePracticeScores();
       renderPracticeLeaderboard();
 
       const vibe = result.total >= 85 ? "absolute cooking 🔥" : result.total >= 70 ? "not bad, chef 👨‍🍳" : result.total >= 50 ? "mid but we see u 👀" : "we will try again 💀";
@@ -1833,6 +1787,7 @@ Respond ONLY with valid JSON, no markdown, no extra text:
     if (!currentPracticeTask) return;
     if (!confirm("Clear the leaderboard for this task?")) return;
     delete practiceScores[currentPracticeTask];
+    savePracticeScores();
     renderPracticeLeaderboard();
   };
 
@@ -1841,8 +1796,9 @@ Respond ONLY with valid JSON, no markdown, no extra text:
     const lbTitle = document.getElementById("practiceLbTitle");
     if (!lb) return;
     const task = currentPracticeTask;
-    const entries = task && practiceScores[task] ? [...practiceScores[task]] : [];
-    entries.sort((a,b) => { const diff = parseFloat(b.score) - parseFloat(a.score); if (Math.abs(diff) > 0.001) return diff; return (a.ts || 0) - (b.ts || 0); }); // tiebreak by timestamp — earlier wins
+    const allEntries = task && practiceScores[task] ? [...practiceScores[task]] : [];
+    allEntries.sort((a,b) => { const diff = parseFloat(b.score) - parseFloat(a.score); if (Math.abs(diff) > 0.001) return diff; return (a.ts||0)-(b.ts||0); });
+    const entries = allEntries.slice(0, 10); // top 10 only
 
     const resetBtn = document.getElementById("resetTaskLbBtn");
     if (lbTitle) {
@@ -1874,7 +1830,7 @@ Respond ONLY with valid JSON, no markdown, no extra text:
       '</div>';
     }).join("") +
     '<div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:10px;text-align:center;">' +
-    entries.length + ' attempt' + (entries.length !== 1 ? 's' : '') + ' on this task</div>';
+    allEntries.length + ' attempt' + (allEntries.length !== 1 ? 's' : '') + ' total' + (allEntries.length > 10 ? ' · showing top 10' : '') + '</div>';
   }
 </script>
 
