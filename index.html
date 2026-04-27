@@ -453,10 +453,7 @@
   <div class="host-layout">
     <div class="host-left">
       <div class="panel">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-          <div class="panel-label accent" style="margin-bottom:0;">the task ✎</div>
-          <button class="btn" id="pastRoundsBtn" onclick="togglePastRounds()" style="font-size:10px;padding:4px 10px;display:none;">past rounds ↓</button>
-        </div>
+        <div class="panel-label accent">the task ✎</div>
         <select class="preset-select" id="presetSelect" onchange="loadPreset()">
           <option value="">— pick a preset (optional) —</option>
           <optgroup label="✏️ Writing & Communication">
@@ -514,10 +511,7 @@
           <button class="btn primary" onclick="setTask()">set task →</button>
           <button class="btn danger" onclick="clearAll()">clear all</button>
         </div>
-        <div id="pastRoundsPanel" style="display:none;margin-top:12px;border:1px solid var(--border);border-radius:4px;overflow:hidden;">
-          <div style="font-family:var(--mono);font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;padding:8px 12px;background:var(--surface2);border-bottom:1px solid var(--border);">past rounds</div>
-          <div id="pastRoundsList" style="max-height:180px;overflow-y:auto;"></div>
-        </div>
+
         <button class="btn reveal-btn" id="revealBtn" onclick="revealIdealPrompt()">✨ reveal the GOAT prompt</button>
         <button class="btn" id="hideRevealBtn" onclick="hideIdealPrompt()" style="width:100%;margin-top:6px;display:none;">hide GOAT prompt</button>
       </div>
@@ -1041,7 +1035,6 @@
     currentTaskId = tid;
     viewingRoundId = null; // always reset to live view when task changes
     attachEntriesListener(tid);
-    updateRoundSelector();
   });
 
   function checkAlreadySubmitted(task) {
@@ -1099,70 +1092,8 @@
     }
   });
 
-  let allRounds = {}; // { taskId: taskText }
-  let viewingRoundId = null; // null = current
+  let viewingRoundId = null;
 
-  function updateRoundSelector() {
-    onValue(ref(db, "rounds"), snap => {
-      const data = snap.val() || {};
-      allRounds = {};
-      Object.keys(data).forEach(tid => { allRounds[tid] = data[tid].task || tid; });
-      const pastBtn = document.getElementById("pastRoundsBtn");
-      const list = document.getElementById("pastRoundsList");
-      const pastIds = Object.keys(allRounds).reverse();
-      // Show button only if there are past rounds
-      if (pastBtn) pastBtn.style.display = pastIds.length > 1 ? "block" : "none";
-      if (!list) return;
-      list.innerHTML = pastIds.map(tid => {
-        const taskText = allRounds[tid] || tid;
-        const isCurrent = tid === currentTaskId;
-        return `<div onclick="switchToRound('${tid}')" style="padding:8px 12px;font-family:var(--mono);font-size:12px;cursor:pointer;border-bottom:1px solid var(--border);color:${isCurrent ? 'var(--accent)' : 'var(--text2)'};background:transparent;transition:background .15s;" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='transparent'">
-          ${isCurrent ? '● ' : '○ '}${esc(taskText.slice(0,50))}${taskText.length > 50 ? '…' : ''}${isCurrent ? ' <span style="color:var(--muted);font-size:10px;">(current)</span>' : ''}
-        </div>`;
-      }).join('');
-      if (pastIds.length === 0) list.innerHTML = '<div style="padding:10px 12px;font-family:var(--mono);font-size:11px;color:var(--muted);">no past rounds yet</div>';
-    }, { onlyOnce: true });
-  }
-
-  window.togglePastRounds = function() {
-    const panel = document.getElementById("pastRoundsPanel");
-    const btn = document.getElementById("pastRoundsBtn");
-    if (!panel) return;
-    const isOpen = panel.style.display !== "none";
-    panel.style.display = isOpen ? "none" : "block";
-    if (btn) btn.textContent = isOpen ? "past rounds ↓" : "past rounds ↑";
-    if (!isOpen) updateRoundSelector(); // refresh when opening
-  };
-
-  window.switchToRound = function(tid) {
-    const isCurrent = tid === currentTaskId;
-    viewingRoundId = isCurrent ? null : tid;
-
-    if (isCurrent) {
-      // Reattach live listener for current round
-      attachEntriesListener(currentTaskId);
-    } else {
-      // One-time snapshot for past round
-      onValue(ref(db, "rounds/" + tid + "/entries"), snap => {
-        const data = snap.val();
-        const entries = data ? Object.values(data) : [];
-        entries.sort((a,b) => { const diff = parseFloat(b.score) - parseFloat(a.score); if (Math.abs(diff) > 0.001) return diff; return (a.ts||0)-(b.ts||0); });
-        document.getElementById("subCount").textContent = "viewing past: " + entries.length + " submission" + (entries.length!==1?"s":"");
-        renderLeaderboard(entries);
-      }, { onlyOnce: true });
-      onValue(ref(db, "rounds/" + tid + "/task"), snap => {
-        const t = snap.val();
-        if (t && document.getElementById("taskInput")) document.getElementById("taskInput").value = t;
-      }, { onlyOnce: true });
-    }
-    // Close panel
-    const panel = document.getElementById("pastRoundsPanel");
-    const btn = document.getElementById("pastRoundsBtn");
-    if (panel) panel.style.display = "none";
-    if (btn) btn.textContent = "past rounds ↓";
-  };
-
-  // Also save task text in round when setTask is called
   window.setTask = function() {
     const t = document.getElementById("taskInput").value.trim();
     if (!t) return alert("enter a task first bestie");
@@ -1174,7 +1105,6 @@
     set(idealRef, null);
     // Save task text in round (only if new)
     set(ref(db, "rounds/" + taskKey + "/task"), t);
-    setTimeout(updateRoundSelector, 1000);
   };
 
   window.clearAll = function() {
