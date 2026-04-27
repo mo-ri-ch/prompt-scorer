@@ -175,10 +175,19 @@
     .submit-btn { width: 100%; margin-top: 14px; padding: 14px; border-radius: 4px; border: none; background: var(--accent); color: #fff; font-family: var(--mono); font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: opacity 0.15s; }
 
     /* ── GUIDE SECTION ── */
-    .guide-section { max-width: 1180px; margin: 0 auto 28px; }
-    .guide-header { margin-bottom: 16px; }
-    .guide-title { font-family: var(--serif); font-size: 26px; font-style: italic; color: var(--text); letter-spacing: -0.5px; }
-    .guide-sub { font-family: var(--mono); font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-top: 4px; }
+    /* Learn tab: slide-style scrolling layout */
+    #learn { padding: 0; }
+    .learn-slide { max-width: 1100px; margin: 0 auto; padding: 72px 32px; border-bottom: 1px solid var(--border); }
+    .learn-slide:last-child { border-bottom: none; }
+    .slide-eyebrow { font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: .2em; margin-bottom: 12px; }
+    .slide-title { font-family: var(--sans); font-size: clamp(26px, 4vw, 38px); font-weight: 800; color: var(--text); letter-spacing: -0.5px; line-height: 1.15; margin-bottom: 10px; }
+    .slide-subtitle { font-size: 15px; color: var(--muted); line-height: 1.6; margin-bottom: 36px; max-width: 620px; }
+    .slide-divider { width: 36px; height: 2px; background: var(--accent); border-radius: 999px; margin-bottom: 32px; }
+
+    .guide-section { max-width: 1100px; margin: 0 auto; }
+    .guide-header { margin-bottom: 24px; }
+    .guide-title { font-family: var(--sans); font-size: clamp(26px,4vw,38px); font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
+    .guide-sub { font-family: var(--mono); font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-top: 6px; }
     .guide-grid { columns: 5; column-gap: 10px; }
     .guide-card { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; cursor: pointer; transition: border .15s; overflow: hidden; break-inside: avoid; margin-bottom: 8px; display: inline-block; width: 100%; }
     .guide-card:hover { background: var(--surface2); }
@@ -286,9 +295,9 @@
     }
 
     /* ── INSIGHT SECTIONS ── */
-    .insight-section { max-width: 1180px; margin: 32px auto 0; }
-    .insight-title { font-family: var(--sans); font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-    .insight-sub { font-family: var(--mono); font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 18px; }
+    .insight-section { max-width: 1100px; margin: 0 auto; }
+    .insight-title { font-family: var(--sans); font-size: clamp(26px,4vw,38px); font-weight: 800; color: var(--text); letter-spacing: -0.5px; margin-bottom: 6px; }
+    .insight-sub { font-family: var(--mono); font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 32px; }
 
     /* myth vs truth */
     .myth-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
@@ -322,7 +331,7 @@
     @media (max-width: 500px) { .levels-grid { grid-template-columns: 1fr; } }
 
     /* ── TRY IT SECTION ── */
-    .tryit-section { max-width: 1180px; margin: 32px auto 0; }
+    .tryit-section { max-width: 1100px; margin: 0 auto; }
     .tryit-header { margin-bottom: 20px; }
     .tryit-title { font-family: var(--sans); font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
     .tryit-sub { font-family: var(--mono); font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; }
@@ -624,10 +633,13 @@
 
 <!-- 🧠 LEARN TAB -->
 <div id="learn" class="view">
+  <div class="learn-slide">
   <div class="guide-section">
     <div class="guide-header">
-      <div class="guide-title">🧠 know your prompts</div>
-      <div class="guide-sub">tap any technique to learn how to use it</div>
+      <div class="slide-eyebrow">technique reference</div>
+      <div class="guide-title">know your prompts</div>
+      <div class="slide-divider"></div>
+      <div class="guide-sub">tap any card to expand — 14 techniques that separate good prompts from great ones</div>
     </div>
     <div class="guide-grid">
       <div class="guide-card" onclick="toggleGuideCard(this)">
@@ -689,11 +701,15 @@
     </div>
   </div>
 
-  <!-- TRY IT YOURSELF -->
+  </div><!-- end learn-slide -->
+
+  <div class="learn-slide">
   <!-- MYTH BUSTER -->
   <div class="insight-section">
-    <div class="insight-title">💡 good English ≠ good prompts</div>
-    <div class="insight-sub">the most common misconception</div>
+    <div class="slide-eyebrow">the big misconception</div>
+    <div class="insight-title">good English ≠ good prompts</div>
+    <div class="slide-divider"></div>
+    <div class="insight-sub">prompting is structured thinking, not language skill</div>
     <div class="myth-grid">
       <div class="myth-card bad">
         <div class="myth-label bad">❌ what people assume</div>
@@ -717,10 +733,16 @@
     </div>
   </div>
 
+  </div>
+  </div><!-- end learn-slide -->
+
+  <div class="learn-slide">
   <!-- 5 LEVELS -->
-  <div class="insight-section" style="margin-top:32px;">
-    <div class="insight-title">📶 the 5 levels of prompting</div>
-    <div class="insight-sub">same topic, completely different outputs</div>
+  <div class="insight-section">
+    <div class="slide-eyebrow">skill progression</div>
+    <div class="insight-title">the 5 levels of prompting</div>
+    <div class="slide-divider"></div>
+    <div class="insight-sub">same topic, completely different outputs — see exactly what changes at each level</div>
     <div class="levels-grid">
       <div class="level-card" style="border-top:3px solid #f87171;">
         <div class="level-num"><span class="level-dot" style="background:#f87171;"></span>LEVEL 1</div>
@@ -758,10 +780,16 @@
     </div>
   </div>
 
+  </div>
+  </div><!-- end learn-slide -->
+
+  <div class="learn-slide">
   <!-- COMPONENT WEIGHTS -->
-  <div class="insight-section" style="margin-top:32px;">
-    <div class="insight-title">⚖️ what matters most in a prompt</div>
-    <div class="insight-sub">no fixed formula — but practical impact order</div>
+  <div class="insight-section">
+    <div class="slide-eyebrow">priority guide</div>
+    <div class="insight-title">what matters most in a prompt</div>
+    <div class="slide-divider"></div>
+    <div class="insight-sub">no fixed formula — but task clarity and constraints drive 75% of the result</div>
     <div class="weights-list">
       <div class="weight-row" style="border-left:3px solid var(--accent);">
         <div class="weight-rank">🥇</div>
@@ -799,10 +827,16 @@
     </div>
   </div>
 
+  </div>
+  </div><!-- end learn-slide -->
+
+  <div class="learn-slide">
   <div class="tryit-section">
     <div class="tryit-header">
-      <div class="tryit-title">🧪 try it yourself</div>
-      <div class="tryit-sub">copy these into chatgpt · see the difference for yourself</div>
+      <div class="slide-eyebrow">hands-on practice</div>
+      <div class="tryit-title" style="font-family:var(--sans);font-size:clamp(26px,4vw,38px);font-weight:800;letter-spacing:-0.5px;">try it yourself</div>
+      <div class="slide-divider"></div>
+      <div class="tryit-sub">copy these into chatgpt · run both prompts · see the difference for yourself</div>
     </div>
 
     <div class="tryit-grid">
@@ -965,6 +999,7 @@
 
     </div>
   </div>
+  </div><!-- end learn-slide -->
 
 </div>
 
@@ -1112,8 +1147,8 @@
     return id;
   }
 
-  function getDeviceEntryKey() { return localStorage.getItem("ps_entry_key_" + currentTask.slice(0,20)); }
-  function setDeviceEntryKey(key) { localStorage.setItem("ps_entry_key_" + currentTask.slice(0,20), key); }
+  function getDeviceEntryKey() { return localStorage.getItem("ps_entry_key_" + (currentTaskId||"").slice(0,20)); }
+  function setDeviceEntryKey(key) { localStorage.setItem("ps_entry_key_" + (currentTaskId||"").slice(0,20), key); }
 
   let currentTask = "";
 
@@ -1173,13 +1208,17 @@
     });
   }
 
+  // On load and on change — always attach to the current task's leaderboard
   onValue(taskIdRef, snap => {
     const tid = snap.val();
     if (!tid) return;
-    if (tid === currentTaskId) return; // same task set again — no change needed
+    if (tid === currentTaskId) return;
     currentTaskId = tid;
-    viewingRoundId = null; // always reset to live view when task changes
+    viewingRoundId = null;
     attachEntriesListener(tid);
+    // Restore device entry key for this task (so resubmit works after page reload)
+    const savedKey = localStorage.getItem("ps_entry_key_" + tid.slice(0,20));
+    if (savedKey) console.log("Restored entry key for round:", tid);
   });
 
   function checkAlreadySubmitted(task) {
