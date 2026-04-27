@@ -1004,7 +1004,7 @@
       <div class="panel-label">task leaderboard 📊</div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px;">
         <div id="practiceLbTitle" style="font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;flex:1;">pick a task to begin</div>
-        <button id="resetTaskLbBtn" onclick="resetTaskLeaderboard()" style="display:none;padding:4px 10px;border-radius:4px;border:1px solid rgba(248,113,113,.3);background:transparent;color:#fca5a5;font-family:var(--mono);font-size:10px;cursor:pointer;">reset</button>
+        <button id="resetTaskLbBtn" onclick="resetTaskLeaderboard()" style="display:none;padding:4px 10px;border-radius:4px;border:1px solid rgba(248,113,113,.3);background:transparent;color:#fca5a5;font-family:var(--mono);font-size:10px;cursor:pointer;">reset</button>  <!-- host only -->
       </div>
       <div id="practiceLb" style="display:flex;flex-direction:column;gap:6px;">
         <div class="lb-empty">pick a task above to begin</div>
@@ -1784,6 +1784,7 @@ Respond ONLY with valid JSON, no markdown, no extra text:
   };
 
   window.resetTaskLeaderboard = function() {
+    if (sessionStorage.getItem("isHost") !== "yes") return;
     if (!currentPracticeTask) return;
     if (!confirm("Clear the leaderboard for this task?")) return;
     delete practiceScores[currentPracticeTask];
@@ -1811,7 +1812,7 @@ Respond ONLY with valid JSON, no markdown, no extra text:
         lbTitle.textContent = "pick a task to begin";
       }
     }
-    if (resetBtn) resetBtn.style.display = (entries.length > 0) ? "block" : "none";
+    if (resetBtn) resetBtn.style.display = (entries.length > 0 && sessionStorage.getItem("isHost") === "yes") ? "block" : "none";
 
     if (!entries.length) {
       lb.innerHTML = '<div class="lb-empty">' + (task ? 'no attempts yet — go!' : 'pick a task above') + '</div>';
@@ -1974,6 +1975,8 @@ Respond ONLY with valid JSON, no markdown, no extra text:
     });
     document.getElementById("host").classList.add("active");
     document.getElementById("hostTab").classList.add("active");
+    // Refresh practice leaderboard so reset button appears for host
+    if (typeof renderPracticeLeaderboard === "function") renderPracticeLeaderboard();
   }
 
   const PARTICIPANT_TABS = ["compete","learn","practice"];
