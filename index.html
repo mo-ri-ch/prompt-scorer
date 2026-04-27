@@ -1239,12 +1239,7 @@ Respond ONLY with valid JSON, no markdown, no extra text:
   };
 
   function getTiedRank(entries, i) {
-    const score = parseFloat(entries[i].score);
-    let rank = 1;
-    for (let j = 0; j < i; j++) {
-      if (parseFloat(entries[j].score) > score) rank++;
-    }
-    return rank;
+    return i + 1; // unique rank for every person — ties broken by timestamp in sort
   }
 
   function getRankDisplay(rank) {
