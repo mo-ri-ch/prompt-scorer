@@ -1595,9 +1595,23 @@ Respond ONLY with valid JSON, no markdown, no extra text:
   let practiceScores = loadPracticeScores();
   let currentPracticeTask = "";
 
+  // On page load — restore last selected task so leaderboard is visible immediately
+  window.addEventListener("DOMContentLoaded", () => {
+    const lastTask = localStorage.getItem("ps_last_practice_task");
+    const sel = document.getElementById("practiceTaskSelect");
+    if (lastTask && sel) {
+      sel.value = lastTask;
+      currentPracticeTask = lastTask;
+      const taskBox = document.getElementById("practiceTaskBox");
+      if (taskBox) taskBox.textContent = lastTask;
+      renderPracticeLeaderboard();
+    }
+  });
+
   window.loadPracticeTask = function() {
     const val = document.getElementById("practiceTaskSelect").value;
     currentPracticeTask = val;
+    if (val) localStorage.setItem("ps_last_practice_task", val);
     document.getElementById("practiceTaskBox").textContent = val || "select a task above to begin…";
     document.getElementById("practicePrompt").value = "";
     document.getElementById("practiceResult").style.display = "none";
