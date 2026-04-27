@@ -285,6 +285,35 @@
       .practice-right { position: static; }
     }
 
+    /* ── TRY IT SECTION ── */
+    .tryit-section { max-width: 1180px; margin: 32px auto 0; }
+    .tryit-header { margin-bottom: 20px; }
+    .tryit-title { font-family: var(--sans); font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .tryit-sub { font-family: var(--mono); font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; }
+    .tryit-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(480px, 1fr)); gap: 20px; }
+    .tryit-card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+    .tryit-card-header { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .tryit-task { font-family: var(--sans); font-size: 13px; font-weight: 600; color: var(--text); flex: 1; }
+    .tryit-tag { font-family: var(--mono); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; padding: 3px 8px; border-radius: 4px; border: 1px solid; }
+    .tryit-tag-topic { border-color: var(--border2); color: var(--muted); }
+    .tryit-prompts { display: grid; grid-template-columns: 1fr 1fr; }
+    .tryit-col { padding: 14px 16px; }
+    .tryit-col-bad { border-right: 1px solid var(--border); }
+    .tryit-col-label { font-family: var(--mono); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .tryit-col-label.bad { color: #f87171; }
+    .tryit-col-label.good { color: var(--accent); }
+    .tryit-prompt-text { font-family: var(--sans); font-size: 13px; line-height: 1.65; color: var(--text2); background: var(--surface2); border-radius: 4px; padding: 12px; min-height: 80px; margin-bottom: 10px; white-space: pre-wrap; }
+    .tryit-why { font-family: var(--mono); font-size: 11px; color: var(--muted); line-height: 1.5; padding: 8px 10px; background: transparent; border-left: 2px solid var(--border2); }
+    .tryit-why.bad { border-left-color: #f87171; color: #f87171; opacity: 0.8; }
+    .tryit-why.good { border-left-color: var(--accent); color: var(--accent); opacity: 0.9; }
+    .copy-prompt-btn { font-family: var(--mono); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border2); background: transparent; color: var(--muted); cursor: pointer; transition: all 0.15s; display: block; width: 100%; margin-top: 8px; }
+    .copy-prompt-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+    .tryit-chatgpt-bar { padding: 12px 18px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--surface2); }
+    .tryit-chatgpt-hint { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+    .tryit-open-btn { font-family: var(--mono); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: 5px 14px; border-radius: 4px; border: 1px solid var(--border2); background: transparent; color: var(--text); cursor: pointer; text-decoration: none; transition: all 0.15s; }
+    .tryit-open-btn:hover { border-color: var(--accent); color: var(--accent); }
+    @media (max-width: 700px) { .tryit-grid { grid-template-columns: 1fr; } .tryit-prompts { grid-template-columns: 1fr; } .tryit-col-bad { border-right: none; border-bottom: 1px solid var(--border); } }
+
     /* ── FILE UPLOAD ── */
     .file-drop-zone { border: 1px dashed var(--border2); border-radius: 6px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s; background: transparent; }
     .file-drop-zone:hover, .file-drop-zone.drag-over { border-color: var(--accent); background: var(--accent-dim); }
@@ -622,6 +651,175 @@
       </div>
     </div>
   </div>
+
+  <!-- TRY IT YOURSELF -->
+  <div class="tryit-section">
+    <div class="tryit-header">
+      <div class="tryit-title">🧪 try it yourself</div>
+      <div class="tryit-sub">copy these into chatgpt · see the difference for yourself</div>
+    </div>
+
+    <div class="tryit-grid">
+
+      <!-- 1. Email -->
+      <div class="tryit-card">
+        <div class="tryit-card-header">
+          <div class="tryit-task">Task: Write a leave request email to your manager</div>
+          <div class="tryit-tag tryit-tag-topic">Writing</div>
+        </div>
+        <div class="tryit-prompts">
+          <div class="tryit-col tryit-col-bad">
+            <div class="tryit-col-label bad">❌ weak prompt</div>
+            <div class="tryit-prompt-text">Write an email asking for leave.</div>
+            <div class="tryit-why bad">No role, no context, no tone, no format. AI guesses everything — result is generic.</div>
+            <button class="copy-prompt-btn" onclick="copyPrompt(this, 'Write an email asking for leave.')">copy</button>
+          </div>
+          <div class="tryit-col">
+            <div class="tryit-col-label good">✅ strong prompt</div>
+            <div class="tryit-prompt-text">You are a professional employee writing to your direct manager. Write a polite, concise email requesting 3 days of leave next week for a family function. Tone: formal but warm. Keep it under 80 words. Include: reason, dates, and a line offering to hand over pending tasks.</div>
+            <div class="tryit-why good">Role + instruction + context + output format + constraints. Every detail guided.</div>
+            <button class="copy-prompt-btn" onclick="copyPrompt(this, 'You are a professional employee writing to your direct manager. Write a polite, concise email requesting 3 days of leave next week for a family function. Tone: formal but warm. Keep it under 80 words. Include: reason, dates, and a line offering to hand over pending tasks.')">copy</button>
+          </div>
+        </div>
+        <div class="tryit-chatgpt-bar">
+          <div class="tryit-chatgpt-hint">paste both prompts and compare the outputs</div>
+          <a class="tryit-open-btn" href="https://chatgpt.com" target="_blank">open chatgpt ↗</a>
+        </div>
+      </div>
+
+      <!-- 2. Explain concept -->
+      <div class="tryit-card">
+        <div class="tryit-card-header">
+          <div class="tryit-task">Task: Explain how AI works to a non-technical person</div>
+          <div class="tryit-tag tryit-tag-topic">Explaining</div>
+        </div>
+        <div class="tryit-prompts">
+          <div class="tryit-col tryit-col-bad">
+            <div class="tryit-col-label bad">❌ weak prompt</div>
+            <div class="tryit-prompt-text">Explain AI.</div>
+            <div class="tryit-why bad">One word topic, no audience, no format. Output will be textbook-style and overwhelming.</div>
+            <button class="copy-prompt-btn" onclick="copyPrompt(this, 'Explain AI.')">copy</button>
+          </div>
+          <div class="tryit-col">
+            <div class="tryit-col-label good">✅ strong prompt</div>
+            <div class="tryit-prompt-text">Explain how AI works to a 45-year-old small business owner who has never studied technology. Use a simple analogy — compare it to something from everyday life. Keep it under 150 words. Avoid all technical jargon. End with one practical example of how they could use AI in their business today.</div>
+            <div class="tryit-why good">Audience framing + analogy instruction + word limit + jargon constraint + concrete output.</div>
+            <button class="copy-prompt-btn" onclick="copyPrompt(this, 'Explain how AI works to a 45-year-old small business owner who has never studied technology. Use a simple analogy — compare it to something from everyday life. Keep it under 150 words. Avoid all technical jargon. End with one practical example of how they could use AI in their business today.')">copy</button>
+          </div>
+        </div>
+        <div class="tryit-chatgpt-bar">
+          <div class="tryit-chatgpt-hint">notice how much clearer the second response is</div>
+          <a class="tryit-open-btn" href="https://chatgpt.com" target="_blank">open chatgpt ↗</a>
+        </div>
+      </div>
+
+      <!-- 3. Marketing content -->
+      <div class="tryit-card">
+        <div class="tryit-card-header">
+          <div class="tryit-task">Task: Write an Instagram caption for a product</div>
+          <div class="tryit-tag tryit-tag-topic">Marketing</div>
+        </div>
+        <div class="tryit-prompts">
+          <div class="tryit-col tryit-col-bad">
+            <div class="tryit-col-label bad">❌ weak prompt</div>
+            <div class="tryit-prompt-text">Write an Instagram caption for my coffee shop.</div>
+            <div class="tryit-why bad">No tone, no product, no audience, no CTA. AI invents everything — rarely matches your brand.</div>
+            <button class="copy-prompt-btn" onclick="copyPrompt(this, 'Write an Instagram caption for my coffee shop.')">copy</button>
+          </div>
+          <div class="tryit-col">
+            <div class="tryit-col-label good">✅ strong prompt</div>
+            <div class="tryit-prompt-text">Write an Instagram caption for a cozy, independent coffee shop in Kochi targeting working professionals aged 25–35. We just launched a new cold brew. Tone: warm, a little witty, not corporate. Max 3 lines. End with a question to drive comments. Include 3–5 relevant hashtags.</div>
+            <div class="tryit-why good">Target audience + product + tone + format + CTA + hashtags. Nothing left to guesswork.</div>
+            <button class="copy-prompt-btn" onclick="copyPrompt(this, 'Write an Instagram caption for a cozy, independent coffee shop in Kochi targeting working professionals aged 25–35. We just launched a new cold brew. Tone: warm, a little witty, not corporate. Max 3 lines. End with a question to drive comments. Include 3–5 relevant hashtags.')">copy</button>
+          </div>
+        </div>
+        <div class="tryit-chatgpt-bar">
+          <div class="tryit-chatgpt-hint">see how specificity transforms the output quality</div>
+          <a class="tryit-open-btn" href="https://chatgpt.com" target="_blank">open chatgpt ↗</a>
+        </div>
+      </div>
+
+      <!-- 4. Analysis -->
+      <div class="tryit-card">
+        <div class="tryit-card-header">
+          <div class="tryit-task">Task: Get feedback on a business idea</div>
+          <div class="tryit-tag tryit-tag-topic">Analysis</div>
+        </div>
+        <div class="tryit-prompts">
+          <div class="tryit-col tryit-col-bad">
+            <div class="tryit-col-label bad">❌ weak prompt</div>
+            <div class="tryit-prompt-text">Is my business idea good? I want to sell handmade soaps.</div>
+            <div class="tryit-why bad">No structure requested, no depth, yes/no framing. AI gives vague encouragement.</div>
+            <button class="copy-prompt-btn" onclick="copyPrompt(this, 'Is my business idea good? I want to sell handmade soaps.')">copy</button>
+          </div>
+          <div class="tryit-col">
+            <div class="tryit-col-label good">✅ strong prompt</div>
+            <div class="tryit-prompt-text">Act as a startup mentor. Critically evaluate this business idea: selling premium handmade soaps online in India, targeting urban women aged 22–40. Think step by step. Cover: market opportunity, key risks, 3 things I must validate before starting, and one insight I probably haven't considered. Be honest, not encouraging.</div>
+            <div class="tryit-why good">Role + chain-of-thought + structured output + honest constraint. Forces real analysis.</div>
+            <button class="copy-prompt-btn" onclick="copyPrompt(this, 'Act as a startup mentor. Critically evaluate this business idea: selling premium handmade soaps online in India, targeting urban women aged 22–40. Think step by step. Cover: market opportunity, key risks, 3 things I must validate before starting, and one insight I probably haven't considered. Be honest, not encouraging.')">copy</button>
+          </div>
+        </div>
+        <div class="tryit-chatgpt-bar">
+          <div class="tryit-chatgpt-hint">chain-of-thought + role = dramatically deeper analysis</div>
+          <a class="tryit-open-btn" href="https://chatgpt.com" target="_blank">open chatgpt ↗</a>
+        </div>
+      </div>
+
+      <!-- 5. UX/Design -->
+      <div class="tryit-card">
+        <div class="tryit-card-header">
+          <div class="tryit-task">Task: Get UI copy for a signup button</div>
+          <div class="tryit-tag tryit-tag-topic">UX Writing</div>
+        </div>
+        <div class="tryit-prompts">
+          <div class="tryit-col tryit-col-bad">
+            <div class="tryit-col-label bad">❌ weak prompt</div>
+            <div class="tryit-prompt-text">Give me text for a signup button.</div>
+            <div class="tryit-why bad">No product context, no tone, no constraints. You will get "Sign Up" — you already knew that.</div>
+            <button class="copy-prompt-btn" onclick="copyPrompt(this, 'Give me text for a signup button.')">copy</button>
+          </div>
+          <div class="tryit-col">
+            <div class="tryit-col-label good">✅ strong prompt</div>
+            <div class="tryit-prompt-text">You are a UX writer for a productivity app targeting busy freelancers. Write 5 variations of a primary CTA button label for the signup page. The tone should be action-oriented and friendly — not pushy. Each option must be under 4 words. Avoid generic phrases like "Sign Up" or "Get Started". Format: numbered list.</div>
+            <div class="tryit-why good">Role + 5 variations + tone + word constraint + exclusions + output format. Instantly usable.</div>
+            <button class="copy-prompt-btn" onclick="copyPrompt(this, 'You are a UX writer for a productivity app targeting busy freelancers. Write 5 variations of a primary CTA button label for the signup page. The tone should be action-oriented and friendly — not pushy. Each option must be under 4 words. Avoid generic phrases like "Sign Up" or "Get Started". Format: numbered list.')">copy</button>
+          </div>
+        </div>
+        <div class="tryit-chatgpt-bar">
+          <div class="tryit-chatgpt-hint">constraints + exclusions = creative, usable options</div>
+          <a class="tryit-open-btn" href="https://chatgpt.com" target="_blank">open chatgpt ↗</a>
+        </div>
+      </div>
+
+      <!-- 6. Creative -->
+      <div class="tryit-card">
+        <div class="tryit-card-header">
+          <div class="tryit-task">Task: Write a short story opening</div>
+          <div class="tryit-tag tryit-tag-topic">Creative</div>
+        </div>
+        <div class="tryit-prompts">
+          <div class="tryit-col tryit-col-bad">
+            <div class="tryit-col-label bad">❌ weak prompt</div>
+            <div class="tryit-prompt-text">Write a story about a detective.</div>
+            <div class="tryit-why bad">Genre, setting, tone, length, style — all undefined. Result will be clichéd and forgettable.</div>
+            <button class="copy-prompt-btn" onclick="copyPrompt(this, 'Write a story about a detective.')">copy</button>
+          </div>
+          <div class="tryit-col">
+            <div class="tryit-col-label good">✅ strong prompt</div>
+            <div class="tryit-prompt-text">Write the opening paragraph (max 120 words) of a noir detective story set in 1940s Mumbai during monsoon season. The detective is a tired, middle-aged woman who has seen too much. Start in the middle of a scene — she is standing outside a closed door. Use sensory detail. Avoid clichés like "It was a dark and stormy night."</div>
+            <div class="tryit-why good">Setting + character + constraints + scene direction + sensory instruction + specific exclusion.</div>
+            <button class="copy-prompt-btn" onclick="copyPrompt(this, 'Write the opening paragraph (max 120 words) of a noir detective story set in 1940s Mumbai during monsoon season. The detective is a tired, middle-aged woman who has seen too much. Start in the middle of a scene — she is standing outside a closed door. Use sensory detail. Avoid clichés like "It was a dark and stormy night."')">copy</button>
+          </div>
+        </div>
+        <div class="tryit-chatgpt-bar">
+          <div class="tryit-chatgpt-hint">specificity turns generic AI writing into something memorable</div>
+          <a class="tryit-open-btn" href="https://chatgpt.com" target="_blank">open chatgpt ↗</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
 </div>
 
 <!-- ✍️ PRACTICE TAB -->
@@ -766,6 +964,9 @@
     return id;
   }
 
+  function getDeviceEntryKey() { return localStorage.getItem("ps_entry_key_" + currentTask.slice(0,20)); }
+  function setDeviceEntryKey(key) { localStorage.setItem("ps_entry_key_" + currentTask.slice(0,20), key); }
+
   let currentTask = "";
 
   const cleanUrl = window.location.origin + window.location.pathname;
@@ -803,16 +1004,24 @@
   }
 
   function showAlreadySubmitted(s) {
-    document.getElementById("submitArea").style.display = "none";
+    // Show score but still allow editing — resubmit replaces on leaderboard
+    document.getElementById("submitArea").style.display = "block";
     document.getElementById("resultArea").style.display = "none";
     document.getElementById("alreadyArea").style.display = "block";
-    document.getElementById("alreadyArea").innerHTML = `
-      <div class="already-box">
-        <div class="already-icon">🎯</div>
-        <div class="already-title">locked in.</div>
-        <div class="already-score">${Math.round(s.score)}<span style="font-size:22px;color:var(--muted)">/100</span></div>
-        <div class="already-sub">clarity <strong style="color:var(--mint)">${Math.round(s.clarity)}/50</strong> · output quality <strong style="color:var(--mint)">${Math.round(s.output)}/50</strong><br><br>check the leaderboard to see your rank ↗</div>
-      </div>`;
+    document.getElementById("alreadyArea").innerHTML =
+      '<div style="background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:4px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;">' +
+        '<div>' +
+          '<div style="font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;">your current score</div>' +
+          '<div style="font-family:var(--mono);font-size:28px;font-weight:700;color:var(--accent);">' + Math.round(s.score) + '<span style="font-size:14px;color:var(--muted)">/100</span></div>' +
+          '<div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px;">clarity ' + Math.round(s.clarity) + '/50 · output ' + Math.round(s.output) + '/50</div>' +
+        '</div>' +
+        '<div style="font-family:var(--mono);font-size:11px;color:var(--muted);text-align:right;line-height:1.6;">edit your prompt<br>and resubmit to<br>update your score</div>' +
+      '</div>';
+    // Pre-fill their last prompt if saved
+    const lastPrompt = localStorage.getItem("ps_last_prompt");
+    if (lastPrompt && !document.getElementById("pPrompt").value) {
+      document.getElementById("pPrompt").value = lastPrompt;
+    }
   }
 
   function showSubmitArea() {
@@ -920,7 +1129,7 @@ Respond ONLY with valid JSON, no markdown, no extra text:
     if (!name) return alert("drop your name first");
     if (!prompt) return alert("type a prompt");
     if (!task || task.includes("waiting")) return alert("host hasn't set a task yet");
-    if (localStorage.getItem("ps_submitted_task") === task) { showAlreadySubmitted(JSON.parse(localStorage.getItem("ps_submission")||"{}")); return; }
+    // Allow resubmission — will update existing entry
 
     const btn = document.getElementById("submitBtn");
     const statusMsg = document.getElementById("statusMsg");
@@ -967,13 +1176,25 @@ Respond ONLY with valid JSON, no markdown, no extra text:
       let result; try { result = JSON.parse(text); } catch(e) { const m = text.match(/\{[\s\S]*\}/); result = m ? JSON.parse(m[0]) : null; }
       if (!result) throw new Error();
 
-      await push(entriesRef, { name, prompt, score: result.total, clarity: result.clarity, output: result.output, feedback: result.feedback, techniques: result.techniques || null, deviceId: getDeviceId(), ts: Date.now() });
+      // Use set on a fixed key per device per task — updates instead of adding new entry
+      const existingKey = getDeviceEntryKey();
+      if (existingKey) {
+        await set(ref(db, "entries/" + existingKey), { name, prompt, score: result.total, clarity: result.clarity, output: result.output, feedback: result.feedback, techniques: result.techniques || null, deviceId: getDeviceId(), ts: Date.now() });
+      } else {
+        const newRef = await push(entriesRef, { name, prompt, score: result.total, clarity: result.clarity, output: result.output, feedback: result.feedback, techniques: result.techniques || null, deviceId: getDeviceId(), ts: Date.now() });
+        setDeviceEntryKey(newRef.key);
+      }
+      localStorage.setItem("ps_last_prompt", prompt);
       localStorage.setItem("ps_submitted_task", task);
       localStorage.setItem("ps_submission", JSON.stringify({ score: result.total, clarity: result.clarity, output: result.output }));
+      // Show current score banner above form
+      showAlreadySubmitted({ score: result.total, clarity: result.clarity, output: result.output });
 
-      document.getElementById("submitArea").style.display = "none";
+      document.getElementById("submitArea").style.display = "block";
       document.getElementById("resultArea").style.display = "block";
       const vibe = result.total >= 85 ? "absolute cooking 🔥" : result.total >= 70 ? "not bad, chef 👨‍🍳" : result.total >= 50 ? "mid but we see u 👀" : "we'll try again 💀";
+      const isUpdate = !!getDeviceEntryKey();
+      document.getElementById("pPrompt").value = "";
       document.getElementById("resultArea").innerHTML = `
         <div class="result-card">
           <div class="score-kicker">${vibe}</div>
@@ -983,6 +1204,7 @@ Respond ONLY with valid JSON, no markdown, no extra text:
             <div class="breakdown-pill">output quality <strong>${Math.round(result.output)}/50</strong></div>
           </div>
           <div class="feedback">${esc(result.feedback)}</div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:12px;text-align:center;">${isUpdate ? "↑ score updated · write a better prompt above to keep improving" : "you are on the leaderboard · write a better prompt to improve your score"}</div>
         </div>`;
     } catch(e) {
       statusMsg.innerHTML = '<div class="status" style="color:#fca5a5">scoring failed — try again</div>';
@@ -1457,6 +1679,20 @@ Respond ONLY with valid JSON, no markdown, no extra text:
   function loadPreset() {
     const val = document.getElementById("presetSelect").value;
     if (val) { const ta = document.getElementById("taskInput"); ta.value = val; ta.dataset.edited = "1"; }
+  }
+
+  function copyPrompt(btn, text) {
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = "copied ✓";
+      btn.style.borderColor = "var(--accent)";
+      btn.style.color = "var(--accent)";
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.style.borderColor = "";
+        btn.style.color = "";
+      }, 2000);
+    });
   }
 
   function toggleGuideCard(card) {
