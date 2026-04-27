@@ -1033,7 +1033,7 @@
   onValue(entriesRef, snap => {
     const data = snap.val();
     const entries = data ? Object.values(data) : [];
-    entries.sort((a,b) => b.score - a.score);
+    entries.sort((a,b) => { const diff = parseFloat(b.score) - parseFloat(a.score); if (Math.abs(diff) > 0.001) return diff; return (a.ts || 0) - (b.ts || 0); }); // tiebreak by timestamp — earlier wins
     document.getElementById("subCount").textContent = entries.length + " submission" + (entries.length !== 1 ? "s" : "");
     renderLeaderboard(entries);
     renderParticipantLeaderboard(entries);
@@ -1065,6 +1065,8 @@
     if (!t) return alert("enter a task first bestie");
     document.getElementById("taskInput").dataset.edited = "1";
     set(taskRef, t); set(idealRef, null);
+    // Reset first entry tracker when new task is set
+    set(ref(db, "firstEntry"), null);
   };
 
   window.clearAll = function() {
@@ -1141,17 +1143,26 @@ Respond ONLY with valid JSON, no markdown, no extra text:
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "claude-sonnet-4-20250514", max_tokens: 1000,
-          messages: [{ role: "user", content: `You are a strict prompt quality judge and educator. Score this prompt and identify which prompt engineering techniques the participant used.
+          messages: [{ role: "user", content: `You are an extremely strict and discerning prompt engineering judge. Your job is to clearly separate great prompts from average ones — do NOT cluster scores near 70-80. Spread scores across the full 0-100 range to distinguish participants.
+
+SCORING RULES (be harsh and precise):
+- Clarity & Specificity (0-50): 0-10=dangerously vague, 11-20=missing key details, 21-30=adequate but generic, 31-40=good with minor gaps, 41-50=exceptionally precise with all details
+- Output Quality Prediction (0-50): 0-10=AI would produce garbage, 11-20=generic useless output, 21-30=decent but forgettable, 31-40=good output likely, 41-50=excellent targeted output guaranteed
+- Use DECIMAL scores (e.g. 34.5, 27.5) to further distinguish between similar prompts
+- A prompt that just restates the task deserves 15-25 total. Only truly engineered prompts deserve 70+.
+- Penalise heavily: no role, no output format, no constraints, vague language, copying the task verbatim
+
+Score this prompt and identify which prompt engineering techniques the participant used.
 
 Task: ${task}
 Submitted prompt: ${prompt}
 
 Respond ONLY with valid JSON, no markdown, no extra text:
 {
-  "clarity": <0-50>,
-  "output": <0-50>,
-  "total": <0-100>,
-  "feedback": "<2 sentences of constructive feedback>",
+  "clarity": <0-50 with decimals>,
+  "output": <0-50 with decimals>,
+  "total": <0-100 with decimals, must equal clarity+output>,
+  "feedback": "<2 sharp specific sentences naming exactly what is missing and what would improve the score>",
   "techniques": {
     "role_prompting": "<2-3 word verdict e.g. 'Good role set', 'Persona missing' — empty if not used>",
     "instruction": "<2-3 word verdict e.g. 'Crystal clear', 'Too broad', 'Spot on' — always non-empty>",
@@ -1176,12 +1187,27 @@ Respond ONLY with valid JSON, no markdown, no extra text:
       let result; try { result = JSON.parse(text); } catch(e) { const m = text.match(/\{[\s\S]*\}/); result = m ? JSON.parse(m[0]) : null; }
       if (!result) throw new Error();
 
-      // Use set on a fixed key per device per task — updates instead of adding new entry
+      const deviceId = getDeviceId();
       const existingKey = getDeviceEntryKey();
+      const entryData = { name, prompt, score: result.total, clarity: result.clarity, output: result.output, feedback: result.feedback, techniques: result.techniques || null, deviceId, ts: Date.now() };
+
+      // Check if this is the first submission for this task
+      const firstEntrySnap = await new Promise(res => { const fr = ref(db, "firstEntry"); onValue(fr, res, { onlyOnce: true }); });
+      const isFirst = !firstEntrySnap.val();
+      if (isFirst) {
+        entryData.isFirst = true;
+        await set(ref(db, "firstEntry"), { name, deviceId, ts: Date.now() });
+      }
+
       if (existingKey) {
-        await set(ref(db, "entries/" + existingKey), { name, prompt, score: result.total, clarity: result.clarity, output: result.output, feedback: result.feedback, techniques: result.techniques || null, deviceId: getDeviceId(), ts: Date.now() });
+        // Keep isFirst flag if it was already set
+        if (!isFirst) {
+          const prev = await new Promise(res => { const pr = ref(db, "entries/" + existingKey); onValue(pr, res, { onlyOnce: true }); });
+          if (prev.val() && prev.val().isFirst) entryData.isFirst = true;
+        }
+        await set(ref(db, "entries/" + existingKey), entryData);
       } else {
-        const newRef = await push(entriesRef, { name, prompt, score: result.total, clarity: result.clarity, output: result.output, feedback: result.feedback, techniques: result.techniques || null, deviceId: getDeviceId(), ts: Date.now() });
+        const newRef = await push(entriesRef, entryData);
         setDeviceEntryKey(newRef.key);
       }
       localStorage.setItem("ps_last_prompt", prompt);
@@ -1198,10 +1224,10 @@ Respond ONLY with valid JSON, no markdown, no extra text:
       document.getElementById("resultArea").innerHTML = `
         <div class="result-card">
           <div class="score-kicker">${vibe}</div>
-          <div class="score-big">${Math.round(result.total)}<span class="score-denom">/100</span></div>
+          <div class="score-big">${result.total % 1 === 0 ? Math.round(result.total) : result.total.toFixed(1)}<span class="score-denom">/100</span></div>
           <div class="score-breakdown">
-            <div class="breakdown-pill">clarity <strong>${Math.round(result.clarity)}/50</strong></div>
-            <div class="breakdown-pill">output quality <strong>${Math.round(result.output)}/50</strong></div>
+            <div class="breakdown-pill">clarity <strong>${result.clarity.toFixed(1)}/50</strong></div>
+            <div class="breakdown-pill">output quality <strong>${result.output.toFixed(1)}/50</strong></div>
           </div>
           <div class="feedback">${esc(result.feedback)}</div>
           <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:12px;text-align:center;">${isUpdate ? "↑ score updated · write a better prompt above to keep improving" : "you are on the leaderboard · write a better prompt to improve your score"}</div>
@@ -1212,18 +1238,43 @@ Respond ONLY with valid JSON, no markdown, no extra text:
     }
   };
 
+  function getTiedRank(entries, i) {
+    const score = parseFloat(entries[i].score);
+    let rank = 1;
+    for (let j = 0; j < i; j++) {
+      if (parseFloat(entries[j].score) > score) rank++;
+    }
+    return rank;
+  }
+
+  function getRankDisplay(rank) {
+    if (rank === 1) return "🥇";
+    if (rank === 2) return "🥈";
+    if (rank === 3) return "🥉";
+    return `#${rank}`;
+  }
+
+  function getRankClass(rank) {
+    if (rank === 1) return "lb-entry rank-1";
+    if (rank === 2) return "lb-entry rank-2";
+    if (rank === 3) return "lb-entry rank-3";
+    return "lb-entry";
+  }
+
   function renderParticipantLeaderboard(entries) {
     const lb = document.getElementById("participantLeaderboard");
     if (!lb) return;
     if (!entries.length) { lb.innerHTML = '<div class="lb-empty">waiting for the goats…</div>'; return; }
     lb.innerHTML = entries.map((e,i) => {
-      const medal = i===0?"🥇":i===1?"🥈":i===2?"🥉":`${i+1}`;
-      const cls = i===0?"lb-entry rank-1":i===1?"lb-entry rank-2":i===2?"lb-entry rank-3":"lb-entry";
+      const rank = getTiedRank(entries, i);
+      const medal = getRankDisplay(rank);
+      const cls = getRankClass(rank);
+      const firstBadgeP = e.isFirst ? '<span title="First to submit!" style="font-size:12px;margin-left:3px;">⚡</span>' : '';
       return `<div class="${cls}" onclick="openDetail(${i})" style="cursor:pointer;">
         <span class="lb-rank">${medal}</span>
-        <span class="lb-name clickable" style="flex:1;max-width:none;">${esc(e.name)}</span>
+        <span class="lb-name clickable" style="flex:1;max-width:none;">${esc(e.name)}${firstBadgeP}</span>
         <div class="lb-bar-wrap"><div class="lb-bar" style="width:${Math.round(e.score)}%"></div></div>
-        <span class="lb-score">${Math.round(e.score)}</span>
+        <span class="lb-score">${(e.score % 1 === 0 ? Math.round(e.score) : e.score.toFixed(1))}</span>
       </div>`;
     }).join("");
   }
@@ -1234,14 +1285,16 @@ Respond ONLY with valid JSON, no markdown, no extra text:
     const lb = document.getElementById("leaderboard");
     if (!entries.length) { lb.innerHTML = '<div class="lb-empty">waiting for the goats…</div>'; return; }
     lb.innerHTML = entries.map((e,i) => {
-      const medal = i===0?"🥇":i===1?"🥈":i===2?"🥉":`${i+1}`;
-      const cls = i===0?"lb-entry rank-1":i===1?"lb-entry rank-2":i===2?"lb-entry rank-3":"lb-entry";
+      const rank = getTiedRank(entries, i);
+      const medal = getRankDisplay(rank);
+      const cls = getRankClass(rank);
+      const firstBadge = e.isFirst ? '<span title="First to submit!" style="font-size:13px;margin-left:4px;">⚡</span>' : '';
       return `<div class="${cls}" onclick="openDetail(${i})" style="cursor:pointer;">
         <span class="lb-rank">${medal}</span>
-        <span class="lb-name clickable">${esc(e.name)}</span>
+        <span class="lb-name clickable">${esc(e.name)}${firstBadge}</span>
         <span class="lb-prompt">${esc(e.prompt)}</span>
         <div class="lb-bar-wrap"><div class="lb-bar" style="width:${Math.round(e.score)}%"></div></div>
-        <span class="lb-score">${Math.round(e.score)}</span>
+        <span class="lb-score">${(e.score % 1 === 0 ? Math.round(e.score) : e.score.toFixed(1))}</span>
       </div>`;
     }).join("");
   }
@@ -1252,7 +1305,8 @@ Respond ONLY with valid JSON, no markdown, no extra text:
   window.openDetail = function(i) {
     const e = window._allEntries[i];
     if (!e) return;
-    const medal = i===0?"🥇":i===1?"🥈":i===2?"🥉":`#${i+1}`;
+    const rank = getTiedRank(window._allEntries, i);
+    const medal = getRankDisplay(rank);
 
     document.getElementById("detailRank").textContent = medal;
     document.getElementById("detailName").textContent = e.name;
@@ -1465,17 +1519,26 @@ Respond ONLY with valid JSON, no markdown, no extra text:
 
     const fileNote = fileAttached ? `\n\nNote: The participant also attached a file named "${fileAttached.name}". Consider how well their prompt works with or references this file when scoring.` : "";
 
-    userContent.push({ type: "text", text: `You are a strict prompt quality judge and educator. Score this prompt and identify which prompt engineering techniques the writer used.
+    userContent.push({ type: "text", text: `You are an extremely strict and discerning prompt engineering judge. Your job is to clearly separate great prompts from average ones — do NOT cluster scores near 70-80. Spread scores across the full 0-100 range to distinguish participants.
+
+SCORING RULES (be harsh and precise):
+- Clarity & Specificity (0-50): 0-10=dangerously vague, 11-20=missing key details, 21-30=adequate but generic, 31-40=good with minor gaps, 41-50=exceptionally precise with all details
+- Output Quality Prediction (0-50): 0-10=AI would produce garbage, 11-20=generic useless output, 21-30=decent but forgettable, 31-40=good output likely, 41-50=excellent targeted output guaranteed
+- Use DECIMAL scores (e.g. 34.5, 27.5) to further distinguish between similar prompts
+- A prompt that just restates the task deserves 15-25 total. Only truly engineered prompts deserve 70+.
+- Penalise heavily: no role, no output format, no constraints, vague language, copying the task verbatim
+
+Score this prompt and identify which prompt engineering techniques the writer used.
 
 Task: ${task}
 Submitted prompt: ${prompt}${fileNote}
 
 Respond ONLY with valid JSON, no markdown, no extra text:
 {
-  "clarity": <0-50>,
-  "output": <0-50>,
-  "total": <0-100>,
-  "feedback": "<2 sentences of constructive feedback>",
+  "clarity": <0-50 with decimals>,
+  "output": <0-50 with decimals>,
+  "total": <0-100 with decimals, must equal clarity+output>,
+  "feedback": "<2 sharp specific sentences naming exactly what is missing and what would improve the score>",
   "techniques": {
     "role_prompting": "<2-3 word verdict e.g. Good role set, Persona missing — empty if not used>",
     "instruction": "<2-3 word verdict e.g. Crystal clear, Too broad — always non-empty>",
@@ -1562,7 +1625,7 @@ Respond ONLY with valid JSON, no markdown, no extra text:
     if (!lb) return;
     const task = currentPracticeTask;
     const entries = task && practiceScores[task] ? [...practiceScores[task]] : [];
-    entries.sort((a,b) => b.score - a.score);
+    entries.sort((a,b) => { const diff = parseFloat(b.score) - parseFloat(a.score); if (Math.abs(diff) > 0.001) return diff; return (a.ts || 0) - (b.ts || 0); }); // tiebreak by timestamp — earlier wins
 
     const resetBtn = document.getElementById("resetTaskLbBtn");
     if (lbTitle) {
