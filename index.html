@@ -7,7 +7,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,400;1,9..144,300;1,9..144,400;1,9..144,600&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -121,9 +120,8 @@
 
     /* ── JOIN PANEL ── */
     .join-panel { background: linear-gradient(135deg,rgba(167,139,250,0.08),rgba(244,114,182,0.08)); border-color: rgba(167,139,250,0.2) !important; }
-    .qr-center { display: flex; flex-direction: column; align-items: center; gap: 12px; }
-    #qrCanvas { border-radius: 12px; background: white; padding: 8px; box-shadow: 0 8px 32px var(--shadow); }
-    .join-url { font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--text); text-align: center; word-break: break-all; background: var(--surface2); padding: 6px 12px; border-radius: 4px; border: 1px solid var(--border); max-width: 280px; }
+    .qr-center { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 12px 0; }
+    .join-url-big { font-family: var(--mono); font-size: 20px; font-weight: 700; color: var(--text); text-align: center; word-break: break-all; background: var(--surface2); padding: 16px 20px; border-radius: 8px; border: 2px solid var(--accent-border); max-width: 100%; letter-spacing: 0.02em; }
     .copy-btn { padding: 8px 18px; border-radius: 999px; border: 1px solid rgba(110,231,183,0.35); background: rgba(110,231,183,0.08); color: var(--mint); font-family: var(--sans); font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
     .copy-btn:hover { background: rgba(110,231,183,0.16); }
     .sub-count { font-family: var(--mono); font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
@@ -145,6 +143,18 @@
     .lb-bar { height: 100%; border-radius: 999px; background: var(--accent); transition: width .5s ease; }
 
     .lb-score { font-family: var(--mono); font-size: 16px; font-weight: 800; min-width: 32px; max-width: 42px; text-align: right; flex-shrink: 0; }
+
+    /* ── VISIBILITY TOGGLE ── */
+    .visibility-control { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 16px; }
+    .visibility-label { font-family: var(--sans); font-size: 14px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px; }
+    .visibility-icon { font-size: 16px; }
+    .toggle-switch { position: relative; display: inline-block; width: 48px; height: 26px; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; cursor: pointer; inset: 0; background: var(--muted); border-radius: 26px; transition: all 0.3s; }
+    .toggle-slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: all 0.3s; }
+    .toggle-switch input:checked + .toggle-slider { background: var(--accent); }
+    .toggle-switch input:checked + .toggle-slider:before { transform: translateX(22px); }
+    .toggle-status { font-family: var(--mono); font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
 
     /* ── PARTICIPANT VIEW ── */
     .p-layout { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 20px; max-width: 1180px; margin: 0 auto; align-items: start; }
@@ -665,8 +675,7 @@
       <div class="panel join-panel">
         <div class="panel-label">join the game 📲</div>
         <div class="qr-center">
-          <div id="qrCanvas"></div>
-          <div class="join-url" id="joinUrl">—</div>
+          <div class="join-url-big" id="joinUrl">—</div>
           <button class="copy-btn" onclick="copyUrl()">copy link ↗</button>
           <div class="sub-count" id="subCount">0 submissions</div>
         </div>
@@ -675,6 +684,19 @@
 
     <div class="panel">
       <div class="panel-label">live scoreboard 🏆</div>
+      
+      <!-- Visibility Toggle Control -->
+      <div class="visibility-control">
+        <div class="visibility-label">
+          <span class="visibility-icon">👀</span>
+          <span>Show leaderboard to participants</span>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="visibilityToggle" onchange="toggleLeaderboardVisibility()" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      
       <div class="leaderboard" id="leaderboard">
         <div class="lb-empty">waiting for the goats…</div>
       </div>
@@ -1155,8 +1177,10 @@
   const taskRef = ref(db, "task");
   const idealRef = ref(db, "ideal");
   const taskIdRef = ref(db, "taskId"); // unique ID per task round
+  const visibilityRef = ref(db, "leaderboardVisible"); // control leaderboard visibility
   let currentTaskId = null;
   let entriesRef = ref(db, "entries/default"); // will be updated per taskId
+  let leaderboardVisible = true; // default to visible
 
   function getDeviceId() {
     let id = localStorage.getItem("ps_device_id");
@@ -1172,15 +1196,6 @@
   const cleanUrl = window.location.origin + window.location.pathname;
   const shortUrl = cleanUrl.replace("https://","").replace("http://","").replace(/\/$/,"");
   document.getElementById("joinUrl").textContent = shortUrl;
-  let qrGenerated = false;
-  window.generateQR = function() {
-    if (qrGenerated) return;
-    const canvas = document.getElementById("qrCanvas");
-    if (!canvas) return;
-    canvas.innerHTML = "";
-    new QRCode(canvas, { text: cleanUrl, width: 160, height: 160, colorDark: getComputedStyle(document.documentElement).getPropertyValue("--text").trim() || "#111111", colorLight: getComputedStyle(document.documentElement).getPropertyValue("--bg").trim() || "#ffffff" });
-    qrGenerated = true;
-  };
 
   window.copyUrl = function() {
     navigator.clipboard.writeText(cleanUrl).then(() => {
@@ -1188,6 +1203,28 @@
       btn.textContent = "copied! ✓";
       setTimeout(() => btn.textContent = "copy link ↗", 2000);
     });
+  };
+
+  // Listen to leaderboard visibility changes
+  onValue(visibilityRef, snap => {
+    const visible = snap.val();
+    leaderboardVisible = visible !== false; // default to true if not set
+    
+    // Update toggle checkbox state
+    const toggle = document.getElementById("visibilityToggle");
+    if (toggle) toggle.checked = leaderboardVisible;
+    
+    // Re-render participant leaderboard to apply visibility
+    if (typeof renderParticipantLeaderboard === "function" && window._allEntries) {
+      renderParticipantLeaderboard(window._allEntries);
+    }
+  });
+
+  // Toggle leaderboard visibility (host only)
+  window.toggleLeaderboardVisibility = function() {
+    const toggle = document.getElementById("visibilityToggle");
+    const newValue = toggle.checked;
+    set(visibilityRef, newValue);
   };
 
   onValue(taskRef, snap => {
@@ -1506,6 +1543,13 @@ Respond ONLY with valid JSON, no markdown, no extra text:
   function renderParticipantLeaderboard(entries) {
     const lb = document.getElementById("participantLeaderboard");
     if (!lb) return;
+    
+    // Check if leaderboard should be hidden
+    if (!leaderboardVisible) {
+      lb.innerHTML = '<div class="lb-empty">🔒 host has hidden the leaderboard</div>';
+      return;
+    }
+    
     if (!entries.length) { lb.innerHTML = '<div class="lb-empty">waiting for the goats…</div>'; return; }
     const top10p = entries.slice(0, 10);
     lb.innerHTML = top10p.map((e,i) => {
@@ -2123,8 +2167,6 @@ Respond ONLY with valid JSON, no markdown, no extra text:
     document.getElementById("host").classList.add("active");
     document.getElementById("hostTab").classList.add("active");
     if (typeof renderPracticeLeaderboard === "function") renderPracticeLeaderboard();
-    // Generate QR now that host panel is visible
-    setTimeout(generateQR, 100);
   }
 
   const PARTICIPANT_TABS = ["compete","learn","practice"];
