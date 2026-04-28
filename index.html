@@ -151,7 +151,7 @@
     .p-wrap { min-width: 0; }
     .p-lb-panel { min-width: 0; position: sticky; top: 20px; }
     @media (max-width: 760px) {
-      .p-layout { grid-template-columns: 1fr; }
+
       .p-lb-panel { position: static; }
     }
     .p-hero { text-align: center; margin-bottom: 28px; padding-top: 8px; }
@@ -177,7 +177,7 @@
     /* ── GUIDE SECTION ── */
     /* Learn tab: slide-style scrolling layout */
     #learn { padding: 0; }
-    .learn-slide { max-width: 1100px; margin: 0 auto; padding: 80px 40px; border-bottom: 1px solid var(--border); }
+    .learn-slide { max-width: 1100px; margin: 0 auto; padding: clamp(40px, 8vw, 80px) clamp(16px, 4vw, 40px); border-bottom: 1px solid var(--border); }
     .learn-slide:last-child { border-bottom: none; }
     .slide-eyebrow { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: .18em; margin-bottom: 14px; }
     .slide-title { font-family: var(--sans); font-size: clamp(32px, 5vw, 52px); font-weight: 800; color: var(--text); letter-spacing: -1px; line-height: 1.1; margin-bottom: 12px; }
@@ -188,23 +188,83 @@
     .guide-header { margin-bottom: 24px; }
     .guide-title { font-family: var(--sans); font-size: clamp(32px,5vw,52px); font-weight: 800; color: var(--text); letter-spacing: -1px; }
     .guide-sub { font-family: var(--mono); font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-top: 8px; }
-    .guide-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; align-items: start; }
+    .guide-layout { display: grid; grid-template-columns: 1fr 320px; gap: 20px; align-items: start; }
+    .guide-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; align-items: start; }
     .guide-card { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; cursor: pointer; transition: border .15s, background .15s; overflow: hidden; }
     .guide-card:hover { background: var(--surface2); }
-    .guide-card.expanded { border-color: var(--accent); background: var(--surface2); grid-column: 1 / -1; }
+    .guide-card.expanded { border-color: var(--accent); background: var(--surface2); }
     .guide-card-top { display: flex; align-items: center; gap: 10px; padding: 13px 14px; }
     .guide-badge { font-size: 18px; flex-shrink: 0; line-height: 1; }
     .guide-name { font-family: var(--sans); font-size: 15px; font-weight: 700; color: var(--text); flex: 1; }
     .guide-chevron { font-size: 14px; font-weight: 700; color: var(--muted); transition: transform .25s; flex-shrink: 0; }
     .guide-card.expanded .guide-chevron { transform: rotate(45deg); color: var(--accent); }
-    .guide-card-body { display: none; padding: 14px 20px 20px; font-size: 15px; color: var(--text2); line-height: 1.7; border-top: 1px solid var(--border); }
-    .guide-card.expanded .guide-card-body { display: block; animation: fade-in .15s ease; }
+    .guide-card-body { display: none; }
+    .guide-detail-panel { background: var(--surface); border: 1px solid var(--accent); border-radius: 6px; padding: 20px; position: sticky; top: 20px; min-height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: fade-in .2s ease; }
+    .guide-detail-empty { text-align: center; color: var(--muted); font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: .1em; }
+    .guide-detail-empty-icon { font-size: 28px; margin-bottom: 10px; opacity: 0.4; }
+    .guide-detail-content { width: 100%; }
+    .guide-detail-badge { font-size: 28px; margin-bottom: 8px; }
+    .guide-detail-name { font-family: var(--sans); font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 12px; }
+    .guide-detail-desc { font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 16px; }
+    .guide-detail-eg-label { font-family: var(--mono); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 6px; display: block; }
+    .guide-detail-eg { font-family: var(--mono); font-size: 13px; color: var(--accent); line-height: 1.65; background: var(--surface2); padding: 12px; border-radius: 4px; border-left: 2px solid var(--accent); }
     .guide-eg-label { font-family: var(--mono); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
     .guide-eg { font-family: var(--mono); font-size: 13px; color: var(--accent); display: block; margin-top: 6px; line-height: 1.6; }
-    @media (max-width: 1100px) { .guide-grid { grid-template-columns: repeat(4, 1fr); } }
-    @media (max-width: 860px)  { .guide-grid { grid-template-columns: repeat(3, 1fr); } }
-    @media (max-width: 600px)  { .guide-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 400px)  { .guide-grid { grid-template-columns: 1fr; } }
+    /* ── RESPONSIVE ── */
+
+    /* Large desktop: 1100px+ — default: 4-col grid + 320px panel */
+
+    @media (max-width: 1100px) {
+      .guide-layout { grid-template-columns: 1fr 260px; gap: 16px; }
+      .guide-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 860px) {
+      /* Tablet — stack panel below grid */
+      .guide-layout { grid-template-columns: 1fr; }
+      .guide-grid { grid-template-columns: repeat(3, 1fr); }
+      .guide-detail-panel { position: static; min-height: 100px; }
+      /* Learn slides — reduce padding */
+      .learn-slide { padding: 48px 24px; }
+      /* Levels — 3 cols */
+      .levels-grid { grid-template-columns: repeat(3, 1fr); }
+      /* Try-it — single col prompts */
+      .tryit-prompts { grid-template-columns: 1fr; }
+      .tryit-col-bad { border-right: none; border-bottom: 1px solid var(--border); }
+    }
+
+    @media (max-width: 680px) {
+      /* Large phone — 2-col guide grid */
+      .guide-grid { grid-template-columns: repeat(2, 1fr); }
+      /* Myth — single col */
+      .myth-grid { grid-template-columns: 1fr; }
+      /* Levels — 2 cols */
+      .levels-grid { grid-template-columns: repeat(2, 1fr); }
+      /* Try-it — single col */
+      .tryit-grid { grid-template-columns: 1fr; }
+      /* Compete layout */
+
+      /* Practice layout */
+      .practice-layout { grid-template-columns: 1fr; }
+      /* Weight row compact */
+      .weight-name { min-width: 100px; font-size: 14px; }
+      .weight-note { min-width: 60px; font-size: 11px; }
+      /* Nav */
+      .nav-tabs { gap: 0; }
+      .nav-tab { padding: 8px 10px; font-size: 10px; }
+    }
+
+    @media (max-width: 420px) {
+      /* Small phone */
+      .guide-grid { grid-template-columns: repeat(2, 1fr); }
+      .guide-card-top { padding: 10px 10px; gap: 6px; }
+      .guide-name { font-size: 12px; }
+      .guide-badge { font-size: 14px; }
+      .levels-grid { grid-template-columns: 1fr; }
+      .learn-slide { padding: 36px 16px; }
+      .slide-title, .insight-title, .guide-title { font-size: 26px; }
+      .weight-row { padding: 10px 12px; gap: 10px; }
+    }
 
     /* ── COLLAPSIBLE SECTIONS ── */
     .collapsible { border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 16px; }
@@ -290,8 +350,7 @@
     .practice-lb-score { font-family: var(--mono); font-size: 16px; font-weight: 800; flex-shrink: 0; }
     .practice-best { background: var(--accent-dim); border-color: var(--accent-border) !important; }
     @media (max-width: 900px) {
-      .practice-layout { grid-template-columns: 1fr; }
-      .practice-right { position: static; }
+
     }
 
     /* ── INSIGHT SECTIONS ── */
@@ -327,8 +386,7 @@
     .weight-bar { height: 100%; border-radius: 999px; background: var(--accent); }
     .weight-note { font-family: var(--mono); font-size: 13px; color: var(--muted); text-align: right; min-width: 90px; }
 
-    @media (max-width: 860px) { .myth-grid { grid-template-columns: 1fr; } .levels-grid { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 500px) { .levels-grid { grid-template-columns: 1fr; } }
+
 
     /* ── TRY IT SECTION ── */
     .tryit-section { max-width: 1100px; margin: 0 auto; }
@@ -357,7 +415,7 @@
     .tryit-chatgpt-hint { font-family: var(--mono); font-size: 11px; color: var(--muted); }
     .tryit-open-btn { font-family: var(--mono); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: 5px 14px; border-radius: 4px; border: 1px solid var(--border2); background: transparent; color: var(--text); cursor: pointer; text-decoration: none; transition: all 0.15s; }
     .tryit-open-btn:hover { border-color: var(--accent); color: var(--accent); }
-    @media (max-width: 700px) { .tryit-grid { grid-template-columns: 1fr; } .tryit-prompts { grid-template-columns: 1fr; } .tryit-col-bad { border-right: none; border-bottom: 1px solid var(--border); } }
+
 
     /* ── FILE UPLOAD ── */
     .file-drop-zone { border: 1px dashed var(--border2); border-radius: 6px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s; background: transparent; }
@@ -639,68 +697,81 @@
       <div class="slide-eyebrow">technique reference</div>
       <div class="guide-title">know your prompts</div>
       <div class="slide-divider"></div>
-      <div class="guide-sub">tap any card to expand — 14 techniques that separate good prompts from great ones</div>
+      <div class="guide-sub">tap any card to learn — 14 techniques that separate good prompts from great ones</div>
     </div>
-    <div class="guide-grid">
-      <div class="guide-card" onclick="toggleGuideCard(this)">
-        <div class="guide-card-top"><span class="guide-badge tbadge-role">🎭</span><span class="guide-name">Role Prompting</span><span class="guide-chevron">+</span></div>
-        <div class="guide-card-body">Tell the AI <em>who to be</em> before giving the task. Sets expertise, tone and perspective.<br><br><span class="guide-eg-label">example</span><br><span class="guide-eg">"You are a senior UX designer with 10 years of experience..."</span></div>
-      </div>
-      <div class="guide-card" onclick="toggleGuideCard(this)">
-        <div class="guide-card-top"><span class="guide-badge tbadge-instr">📌</span><span class="guide-name">Instruction</span><span class="guide-chevron">+</span></div>
-        <div class="guide-card-body">The core <em>ask</em>. Be direct, specific and action-oriented. Vague instructions get vague answers.<br><br><span class="guide-eg-label">example</span><br><span class="guide-eg">"Write a 3-point summary in plain English, each point under 20 words."</span></div>
-      </div>
-      <div class="guide-card" onclick="toggleGuideCard(this)">
-        <div class="guide-card-top"><span class="guide-badge tbadge-context">🌐</span><span class="guide-name">Context</span><span class="guide-chevron">+</span></div>
-        <div class="guide-card-body">Give the AI the <em>background it needs</em> — audience, situation, constraints.<br><br><span class="guide-eg-label">example</span><br><span class="guide-eg">"The audience is non-technical managers in a 50-person company."</span></div>
-      </div>
-      <div class="guide-card" onclick="toggleGuideCard(this)">
-        <div class="guide-card-top"><span class="guide-badge tbadge-input">📥</span><span class="guide-name">Input</span><span class="guide-chevron">+</span></div>
-        <div class="guide-card-body">Provide the <em>data or content</em> the AI should work with.<br><br><span class="guide-eg-label">example</span><br><span class="guide-eg">"Here is the email thread: [paste text]..."</span></div>
-      </div>
-      <div class="guide-card" onclick="toggleGuideCard(this)">
-        <div class="guide-card-top"><span class="guide-badge tbadge-output">📤</span><span class="guide-name">Output Format</span><span class="guide-chevron">+</span></div>
-        <div class="guide-card-body">Tell the AI exactly <em>how to structure</em> the response.<br><br><span class="guide-eg-label">example</span><br><span class="guide-eg">"Return as a numbered list. Max 5 items. No intro paragraph."</span></div>
-      </div>
-      <div class="guide-card" onclick="toggleGuideCard(this)">
-        <div class="guide-card-top"><span class="guide-badge tbadge-cot">🔗</span><span class="guide-name">Chain-of-Thought</span><span class="guide-chevron">+</span></div>
-        <div class="guide-card-body">Ask the AI to <em>reason step by step</em> before answering.<br><br><span class="guide-eg-label">example</span><br><span class="guide-eg">"Think through this carefully before giving your final answer."</span></div>
-      </div>
-      <div class="guide-card" onclick="toggleGuideCard(this)">
-        <div class="guide-card-top"><span class="guide-badge tbadge-fewshot">📋</span><span class="guide-name">Few-Shot</span><span class="guide-chevron">+</span></div>
-        <div class="guide-card-body">Show the AI <em>1–3 examples</em> of good responses before asking.<br><br><span class="guide-eg-label">example</span><br><span class="guide-eg">"Here are two examples of the style I want: [ex1] / [ex2]..."</span></div>
-      </div>
-      <div class="guide-card" onclick="toggleGuideCard(this)">
-        <div class="guide-card-top"><span class="guide-badge tbadge-instr">🎯</span><span class="guide-name">Specificity</span><span class="guide-chevron">+</span></div>
-        <div class="guide-card-body">Replace vague words with <em>precise numbers, names and constraints</em>.<br><br><span class="guide-eg-label">weak → strong</span><br><span class="guide-eg">"Write something short" → "Write exactly 3 sentences, under 40 words total."</span></div>
-      </div>
-      <div class="guide-card" onclick="toggleGuideCard(this)">
-        <div class="guide-card-top"><span class="guide-badge tbadge-context">🗣️</span><span class="guide-name">Tone & Voice</span><span class="guide-chevron">+</span></div>
-        <div class="guide-card-body">Tell the AI the <em>emotional register</em> you want.<br><br><span class="guide-eg-label">example</span><br><span class="guide-eg">"Use a warm, conversational tone. Avoid corporate jargon."</span></div>
-      </div>
-      <div class="guide-card" onclick="toggleGuideCard(this)">
-        <div class="guide-card-top"><span class="guide-badge tbadge-output">🚫</span><span class="guide-name">Constraints</span><span class="guide-chevron">+</span></div>
-        <div class="guide-card-body">Tell the AI what to <em>avoid or exclude</em>.<br><br><span class="guide-eg-label">example</span><br><span class="guide-eg">"Do not use bullet points. Do not mention pricing."</span></div>
-      </div>
-      <div class="guide-card" onclick="toggleGuideCard(this)">
-        <div class="guide-card-top"><span class="guide-badge tbadge-role">🎪</span><span class="guide-name">Audience Framing</span><span class="guide-chevron">+</span></div>
-        <div class="guide-card-body">Tell the AI <em>who will read the output</em>.<br><br><span class="guide-eg-label">example</span><br><span class="guide-eg">"Explain this to a non-technical founder who understands business but not engineering."</span></div>
-      </div>
-      <div class="guide-card" onclick="toggleGuideCard(this)">
-        <div class="guide-card-top"><span class="guide-badge tbadge-fewshot">⚡</span><span class="guide-name">Zero-Shot</span><span class="guide-chevron">+</span></div>
-        <div class="guide-card-body">Giving the AI a task <em>with no examples</em> — relying purely on instruction, context and role.<br><br><span class="guide-eg-label">vs few-shot</span><br><span class="guide-eg">Use zero-shot for clear tasks, few-shot when you need a specific style.</span></div>
-      </div>
-      <div class="guide-card" onclick="toggleGuideCard(this)">
-        <div class="guide-card-top"><span class="guide-badge tbadge-cot">🪞</span><span class="guide-name">Self-Reflection</span><span class="guide-chevron">+</span></div>
-        <div class="guide-card-body">Ask the AI to <em>review and critique its own output</em> before finishing.<br><br><span class="guide-eg-label">example</span><br><span class="guide-eg">"After writing your answer, review it for clarity and accuracy."</span></div>
-      </div>
-      <div class="guide-card" onclick="toggleGuideCard(this)">
-        <div class="guide-card-top"><span class="guide-badge tbadge-input">🔁</span><span class="guide-name">Iteration</span><span class="guide-chevron">+</span></div>
-        <div class="guide-card-body">Great prompts are <em>built in layers</em>. Start with a draft, see what is missing, then refine.<br><br><span class="guide-eg-label">tip</span><br><span class="guide-eg">Ask yourself: "What would the AI need to know to nail this?" — then add those details.</span></div>
-      </div>
-    </div>
-  </div>
 
+    <div class="guide-layout">
+      <!-- LEFT: card grid -->
+      <div class="guide-grid" id="guideGrid">
+
+        <div class="guide-card" onclick="toggleGuideCard(this)" data-badge="🎭" data-name="Role Prompting" data-desc="Tell the AI <em>who to be</em> before giving the task. Sets expertise, tone and perspective." data-eg-label="example" data-eg="&quot;You are a senior UX designer with 10 years of experience...&quot;">
+          <div class="guide-card-top"><span class="guide-badge tbadge-role">🎭</span><span class="guide-name">Role Prompting</span><span class="guide-chevron">+</span></div>
+        </div>
+
+        <div class="guide-card" onclick="toggleGuideCard(this)" data-badge="📌" data-name="Instruction" data-desc="The core <em>ask</em>. Be direct, specific and action-oriented. Vague instructions get vague answers." data-eg-label="example" data-eg="&quot;Write a 3-point summary in plain English, each point under 20 words.&quot;">
+          <div class="guide-card-top"><span class="guide-badge tbadge-instr">📌</span><span class="guide-name">Instruction</span><span class="guide-chevron">+</span></div>
+        </div>
+
+        <div class="guide-card" onclick="toggleGuideCard(this)" data-badge="🌐" data-name="Context" data-desc="Give the AI the <em>background it needs</em> — audience, situation, constraints." data-eg-label="example" data-eg="&quot;The audience is non-technical managers in a 50-person company.&quot;">
+          <div class="guide-card-top"><span class="guide-badge tbadge-context">🌐</span><span class="guide-name">Context</span><span class="guide-chevron">+</span></div>
+        </div>
+
+        <div class="guide-card" onclick="toggleGuideCard(this)" data-badge="📥" data-name="Input" data-desc="Provide the <em>data or content</em> the AI should work with." data-eg-label="example" data-eg="&quot;Here is the email thread: [paste text]...&quot;">
+          <div class="guide-card-top"><span class="guide-badge tbadge-input">📥</span><span class="guide-name">Input</span><span class="guide-chevron">+</span></div>
+        </div>
+
+        <div class="guide-card" onclick="toggleGuideCard(this)" data-badge="📤" data-name="Output Format" data-desc="Tell the AI exactly <em>how to structure</em> the response." data-eg-label="example" data-eg="&quot;Return as a numbered list. Max 5 items. No intro paragraph.&quot;">
+          <div class="guide-card-top"><span class="guide-badge tbadge-output">📤</span><span class="guide-name">Output Format</span><span class="guide-chevron">+</span></div>
+        </div>
+
+        <div class="guide-card" onclick="toggleGuideCard(this)" data-badge="🔗" data-name="Chain-of-Thought" data-desc="Ask the AI to <em>reason step by step</em> before answering." data-eg-label="example" data-eg="&quot;Think through this carefully before giving your final answer.&quot;">
+          <div class="guide-card-top"><span class="guide-badge tbadge-cot">🔗</span><span class="guide-name">Chain-of-Thought</span><span class="guide-chevron">+</span></div>
+        </div>
+
+        <div class="guide-card" onclick="toggleGuideCard(this)" data-badge="📋" data-name="Few-Shot" data-desc="Show the AI <em>1–3 examples</em> of good responses before asking." data-eg-label="example" data-eg="&quot;Here are two examples of the style I want: [ex1] / [ex2]...&quot;">
+          <div class="guide-card-top"><span class="guide-badge tbadge-fewshot">📋</span><span class="guide-name">Few-Shot</span><span class="guide-chevron">+</span></div>
+        </div>
+
+        <div class="guide-card" onclick="toggleGuideCard(this)" data-badge="🎯" data-name="Specificity" data-desc="Replace vague words with <em>precise numbers, names and constraints</em>." data-eg-label="weak → strong" data-eg="&quot;Write something short&quot; → &quot;Write exactly 3 sentences, under 40 words total.&quot;">
+          <div class="guide-card-top"><span class="guide-badge tbadge-instr">🎯</span><span class="guide-name">Specificity</span><span class="guide-chevron">+</span></div>
+        </div>
+
+        <div class="guide-card" onclick="toggleGuideCard(this)" data-badge="🗣️" data-name="Tone & Voice" data-desc="Tell the AI the <em>emotional register</em> you want." data-eg-label="example" data-eg="&quot;Use a warm, conversational tone. Avoid corporate jargon.&quot;">
+          <div class="guide-card-top"><span class="guide-badge tbadge-context">🗣️</span><span class="guide-name">Tone & Voice</span><span class="guide-chevron">+</span></div>
+        </div>
+
+        <div class="guide-card" onclick="toggleGuideCard(this)" data-badge="🚫" data-name="Constraints" data-desc="Tell the AI what to <em>avoid or exclude</em>." data-eg-label="example" data-eg="&quot;Do not use bullet points. Do not mention pricing.&quot;">
+          <div class="guide-card-top"><span class="guide-badge tbadge-output">🚫</span><span class="guide-name">Constraints</span><span class="guide-chevron">+</span></div>
+        </div>
+
+        <div class="guide-card" onclick="toggleGuideCard(this)" data-badge="🎪" data-name="Audience Framing" data-desc="Tell the AI <em>who will read the output</em>." data-eg-label="example" data-eg="&quot;Explain this to a non-technical founder who understands business but not engineering.&quot;">
+          <div class="guide-card-top"><span class="guide-badge tbadge-role">🎪</span><span class="guide-name">Audience Framing</span><span class="guide-chevron">+</span></div>
+        </div>
+
+        <div class="guide-card" onclick="toggleGuideCard(this)" data-badge="⚡" data-name="Zero-Shot" data-desc="Giving the AI a task <em>with no examples</em> — relying purely on instruction, context and role." data-eg-label="vs few-shot" data-eg="Use zero-shot for clear tasks, few-shot when you need a specific style.">
+          <div class="guide-card-top"><span class="guide-badge tbadge-fewshot">⚡</span><span class="guide-name">Zero-Shot</span><span class="guide-chevron">+</span></div>
+        </div>
+
+        <div class="guide-card" onclick="toggleGuideCard(this)" data-badge="🪞" data-name="Self-Reflection" data-desc="Ask the AI to <em>review and critique its own output</em> before finishing." data-eg-label="example" data-eg="&quot;After writing your answer, review it for clarity and accuracy.&quot;">
+          <div class="guide-card-top"><span class="guide-badge tbadge-cot">🪞</span><span class="guide-name">Self-Reflection</span><span class="guide-chevron">+</span></div>
+        </div>
+
+        <div class="guide-card" onclick="toggleGuideCard(this)" data-badge="🔁" data-name="Iteration" data-desc="Great prompts are <em>built in layers</em>. Start with a draft, see what is missing, then refine." data-eg-label="tip" data-eg="Ask yourself: &quot;What would the AI need to know to nail this?&quot; — then add those details.">
+          <div class="guide-card-top"><span class="guide-badge tbadge-input">🔁</span><span class="guide-name">Iteration</span><span class="guide-chevron">+</span></div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: detail panel -->
+      <div class="guide-detail-panel" id="guideDetailPanel">
+        <div class="guide-detail-empty">
+          <div class="guide-detail-empty-icon">👆</div>
+          <div>tap a card to explore</div>
+        </div>
+      </div>
+
+    </div><!-- end guide-layout -->
+  </div>
   </div><!-- end learn-slide -->
 
   <!-- MYTH BUSTER -->
@@ -731,6 +802,7 @@
     <div style="font-family:var(--mono);font-size:15px;color:var(--muted);padding:14px 16px;background:var(--surface2);border-radius:4px;border-left:2px solid var(--accent);">
       The second works better not because of English — but because of <strong style="color:var(--text);">constraints + audience + specificity.</strong> That's task design, not language skill.
     </div>
+
   </div>
   </div><!-- end learn-slide -->
 
@@ -1963,10 +2035,37 @@ Respond ONLY with valid JSON, no markdown, no extra text:
 
   function toggleGuideCard(card) {
     const isOpen = card.classList.contains('expanded');
-    // Close all guide cards first
     document.querySelectorAll('.guide-card').forEach(c => c.classList.remove('expanded'));
-    // If it wasn't open, open it
-    if (!isOpen) card.classList.add('expanded');
+    const panel = document.getElementById('guideDetailPanel');
+    if (!panel) return;
+
+    if (isOpen) {
+      panel.innerHTML = '<div class="guide-detail-empty"><div class="guide-detail-empty-icon">👆</div><div>tap a card to explore</div></div>';
+      panel.style.justifyContent = 'center';
+      panel.style.alignItems = 'center';
+      return;
+    }
+
+    card.classList.add('expanded');
+
+    const badge = card.dataset.badge || '';
+    const name  = card.dataset.name  || '';
+    const desc  = card.dataset.desc  || '';
+    const egLabel = card.dataset.egLabel || 'example';
+    const eg    = card.dataset.eg    || '';
+
+    panel.style.justifyContent = 'flex-start';
+    panel.style.alignItems = 'flex-start';
+    panel.innerHTML =
+      '<div class="guide-detail-content">' +
+        '<div class="guide-detail-badge">' + badge + '</div>' +
+        '<div class="guide-detail-name">' + name + '</div>' +
+        '<div class="guide-detail-desc">' + desc + '</div>' +
+        (eg ? '<div style="margin-top:16px;"><span class="guide-detail-eg-label">' + egLabel + '</span><div class="guide-detail-eg">' + eg + '</div></div>' : '') +
+      '</div>';
+
+    // On mobile — scroll panel into view
+    if (window.innerWidth <= 860) panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 
   function toggleCollapse(header) {
