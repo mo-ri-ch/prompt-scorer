@@ -1217,7 +1217,15 @@
   const cleanUrl = window.location.origin + window.location.pathname;
   const shortUrl = cleanUrl.replace("https://","").replace("http://","").replace(/\/$/,"");
   document.getElementById("joinUrl").textContent = shortUrl;
-  new QRCode(document.getElementById("qrCanvas"), { text: cleanUrl, width: 160, height: 160, colorDark:"#08080f", colorLight:"#ffffff" });
+  let qrGenerated = false;
+  window.generateQR = function() {
+    if (qrGenerated) return;
+    const canvas = document.getElementById("qrCanvas");
+    if (!canvas) return;
+    canvas.innerHTML = "";
+    new QRCode(canvas, { text: cleanUrl, width: 160, height: 160, colorDark: getComputedStyle(document.documentElement).getPropertyValue("--text").trim() || "#111111", colorLight: getComputedStyle(document.documentElement).getPropertyValue("--bg").trim() || "#ffffff" });
+    qrGenerated = true;
+  };
 
   window.copyUrl = function() {
     navigator.clipboard.writeText(cleanUrl).then(() => {
@@ -1233,14 +1241,17 @@
       if (currentTask !== "") {
         localStorage.removeItem("ps_submitted_task");
         localStorage.removeItem("ps_submission");
-        showSubmitArea();
+        if (typeof showSubmitArea === "function") showSubmitArea();
       }
       currentTask = t;
     }
-    document.getElementById("pTaskBox").textContent = t || "waiting for the host to drop the task…";
+    // Update task display in compete tab (null-safe)
+    const pTaskBox = document.getElementById("pTaskBox");
+    if (pTaskBox) pTaskBox.textContent = t || "waiting for the host to drop the task…";
+    // Update host textarea only if not manually edited
     const ti = document.getElementById("taskInput");
     if (ti && !ti.dataset.edited) ti.value = t;
-    checkAlreadySubmitted(t);
+    if (typeof checkAlreadySubmitted === "function") checkAlreadySubmitted(t);
   });
 
   // Listen to taskId — switch leaderboard to new round
@@ -1338,7 +1349,11 @@
     if (!t) return alert("enter a task first bestie");
     document.getElementById("taskInput").dataset.edited = "1";
     // Use a stable key based on task text so same task always reuses same leaderboard
-    const taskKey = "round_" + btoa(encodeURIComponent(t.trim().toLowerCase().slice(0, 60))).replace(/[^a-zA-Z0-9]/g, "").slice(0, 30);
+    // Simple stable hash — no btoa/encodeURIComponent edge cases
+    let hash = 0;
+    const str = t.trim().toLowerCase().slice(0, 80);
+    for (let i = 0; i < str.length; i++) { hash = ((hash << 5) - hash) + str.charCodeAt(i); hash |= 0; }
+    const taskKey = "round_" + Math.abs(hash).toString(36);
     set(taskRef, t);
     set(taskIdRef, taskKey);
     set(idealRef, null);
@@ -1721,7 +1736,7 @@ Respond ONLY with valid JSON, no markdown, no extra text:
     });
   }
 
-  function savePracticeScores() {} // no-op — Firebase handles persistence
+
 
   // On page load — restore last selected task
   window.addEventListener("DOMContentLoaded", () => {
@@ -2152,8 +2167,9 @@ Respond ONLY with valid JSON, no markdown, no extra text:
     });
     document.getElementById("host").classList.add("active");
     document.getElementById("hostTab").classList.add("active");
-    // Refresh practice leaderboard so reset button appears for host
     if (typeof renderPracticeLeaderboard === "function") renderPracticeLeaderboard();
+    // Generate QR now that host panel is visible
+    setTimeout(generateQR, 100);
   }
 
   const PARTICIPANT_TABS = ["compete","learn","practice"];
@@ -2185,6 +2201,8 @@ Respond ONLY with valid JSON, no markdown, no extra text:
   window.closeDetail = function(ev) {
     if (ev.target === document.getElementById("detailOverlay")) window.closeDetailModal();
   };
+
+
 
 </script>
 </body>
