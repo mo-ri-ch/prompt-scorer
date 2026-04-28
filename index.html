@@ -150,10 +150,7 @@
     .p-layout { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 20px; max-width: 1180px; margin: 0 auto; align-items: start; }
     .p-wrap { min-width: 0; }
     .p-lb-panel { min-width: 0; position: sticky; top: 20px; }
-    @media (max-width: 760px) {
-
-      .p-lb-panel { position: static; }
-    }
+    @media (max-width: 860px) { .p-layout { grid-template-columns: 1fr; } .p-lb-panel { position: static; } }
     .p-hero { text-align: center; margin-bottom: 28px; padding-top: 8px; }
     .p-hero-kicker { font-family: var(--mono); font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 8px; }
     .p-hero-title { font-family: var(--sans); font-size: clamp(28px, 5vw, 40px); font-style: normal; font-weight: 700; line-height: 1.1; letter-spacing: -0.5px; }
@@ -439,33 +436,78 @@
     .footer-link:hover { border-color: var(--accent); color: var(--accent); }
 
 
-    /* ── MOBILE ── */
-    @media (max-width: 900px) {
-      nav { padding: 12px 16px; }
-      .logo { font-size: 20px; }
-      .nav-tab { padding: 6px 14px; font-size: 12px; }
-      .view { padding: 16px 14px 60px; }
+    /* ── RESPONSIVE: TABLET 860px ── */
+    @media (max-width: 860px) {
+      .view { padding: 16px 16px 60px; }
       .host-layout { grid-template-columns: 1fr; gap: 14px; }
-      .panel { padding: 16px; border-radius: 16px; }
+      .panel { padding: 16px; }
       .lb-bar-wrap { display: none; }
       .lb-prompt { display: none; }
       .lb-name { min-width: 0; max-width: none; flex: 1; }
-      .p-task-box { font-size: 18px; padding: 16px 16px 16px 28px; }
-      .score-big { font-size: 80px; }
-      .feedback { font-size: 15px; }
+      .score-big { font-size: 72px; }
+      .practice-layout { grid-template-columns: 1fr; }
+      .practice-right { position: static; }
     }
 
-    @media (max-width: 380px) {
-      .nav-tab { padding: 5px 12px; font-size: 11px; }
-      .logo { font-size: 18px; }
-      .p-hero-title { font-size: 30px; }
-      .score-big { font-size: 68px; }
+    /* ── RESPONSIVE: LARGE PHONE 680px ── */
+    @media (max-width: 680px) {
+      nav { padding: 10px 14px; flex-wrap: nowrap; }
+      .logo { font-size: 13px; }
+      .nav-tab { padding: 7px 10px; font-size: 11px; letter-spacing: .04em; }
+      .view { padding: 12px 12px 60px; }
+      .panel { padding: 14px; }
+      .p-layout { grid-template-columns: 1fr; }
+      .p-lb-panel { position: static; }
+      .p-hero-title { font-size: clamp(22px, 6vw, 32px); }
+      .score-big { font-size: 64px; }
+      .feedback { font-size: 14px; }
+      .breakdown-pill { font-size: 11px; padding: 3px 8px; }
+      .lb-score { font-size: 14px; }
+      .lb-name { font-size: 13px; }
+      .result-card { padding: 16px; }
+      /* Detail modal on mobile */
+      .detail-box { grid-template-columns: 1fr; padding: 20px 16px; gap: 16px; }
+      /* Practice */
+      .practice-layout { grid-template-columns: 1fr; }
+      .practice-right { position: static; }
+      /* Tryit */
+      .tryit-grid { grid-template-columns: 1fr; }
+      .tryit-prompts { grid-template-columns: 1fr; }
+      .tryit-col-bad { border-right: none; border-bottom: 1px solid var(--border); }
+    }
+
+    /* ── RESPONSIVE: SMALL PHONE 420px ── */
+    @media (max-width: 420px) {
+      nav { padding: 8px 10px; }
+      .logo { font-size: 12px; }
+      .nav-tab { padding: 6px 8px; font-size: 10px; }
+      .view { padding: 10px 10px 60px; }
+      .p-hero-title { font-size: 22px; }
+      .score-big { font-size: 56px; }
+      .slide-title, .insight-title, .guide-title { font-size: 24px !important; }
+      .guide-name { font-size: 12px; }
+      .guide-badge { font-size: 14px; }
+      .guide-card-top { padding: 9px 10px; gap: 6px; }
+      .weight-name { font-size: 13px; min-width: 90px; }
+      .weight-note { font-size: 11px; min-width: 50px; }
+      .weight-rank { font-size: 16px; }
+      .weight-row { padding: 10px 12px; gap: 10px; }
+      .myth-card { padding: 14px 14px; }
+      .myth-text { font-size: 14px; }
+      .level-card { padding: 12px; }
+      .level-label { font-size: 13px; }
+      .level-prompt { font-size: 11px; padding: 8px; }
+      .level-why { font-size: 11px; }
+      .tryit-task { font-size: 13px; }
+      .tryit-prompt-text { font-size: 13px; }
+      .tryit-why { font-size: 11px; }
+      .learn-slide { padding: 32px 14px; }
     }
 
     /* ── DETAIL MODAL ── */
     .detail-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(14px); z-index:300; align-items:center; justify-content:center; padding:20px; }
     .detail-overlay.open { display:flex; }
-    .detail-box { background:var(--card-bg); border:1px solid var(--border2); border-radius:20px; padding:28px 32px; width:95%; max-width:1000px; max-height:92vh; position:relative; animation:slide-up .35s cubic-bezier(.34,1.56,.64,1); display:grid; grid-template-columns:220px 1fr; gap:0 28px; overflow-y:auto; align-items:start; }
+    .detail-box { background:var(--card-bg); border:1px solid var(--border2); border-radius:16px; padding:24px 28px; width:95%; max-width:1000px; max-height:92vh; position:relative; animation:slide-up .35s cubic-bezier(.34,1.56,.64,1); display:grid; grid-template-columns:220px 1fr; gap:0 28px; overflow-y:auto; align-items:start; }
     .detail-close { position:absolute; top:14px; right:14px; width:28px; height:28px; border-radius:50%; border:1px solid var(--border2); background:var(--surface2); color:var(--muted); font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .2s; grid-column:1/-1; z-index:1; }
     .detail-close:hover { background:var(--surface3); color:var(--text); }
     .detail-close { width:26px !important; height:26px !important; }
@@ -505,7 +547,8 @@
     .lb-name.clickable:hover { color:var(--violet); }
 
     /* ── CUSTOM SCROLLBARS ── */
-    * { scrollbar-width: thin; scrollbar-color: rgba(167,139,250,0.4) transparent; }
+    * { scrollbar-width: thin; scrollbar-color: rgba(24,185,129,0.4) transparent; }
+    html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
     *::-webkit-scrollbar { width: 4px; height: 4px; }
     *::-webkit-scrollbar-track { background: transparent; }
     *::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--violet), var(--mint)); border-radius: 999px; }
@@ -1653,7 +1696,13 @@ Respond ONLY with valid JSON, no markdown, no extra text:
 
   /* ── PRACTICE TAB (needs esc + buildTechniqueBadges from module) ── */
   // practiceScores: stored in Firebase under practice/<taskKey>/entries
-  let practiceScores = {}; // local cache
+  function loadPracticeScores() {
+    try { return JSON.parse(localStorage.getItem("ps_practice_scores") || "{}"); } catch(e) { return {}; }
+  }
+  function savePracticeScores() {
+    try { localStorage.setItem("ps_practice_scores", JSON.stringify(practiceScores)); } catch(e) {}
+  }
+  let practiceScores = loadPracticeScores();
   let currentPracticeTask = "";
   let practiceListener = null;
 
